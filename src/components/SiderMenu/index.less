@@ -1,0 +1,225 @@
+@import '~antd/lib/style/themes/default.less';
+
+@nav-header-height: @layout-header-height;
+
+.logo {
+  height: @nav-header-height;
+  position: relative;
+  line-height: @nav-header-height;
+  padding-left: (@menu-collapsed-width - 32px) / 2;
+  transition: all 0.3s;
+  background: #002140;
+  overflow: hidden;
+
+  img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 32px;
+  }
+
+  h1 {
+    color: white;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 20px;
+    margin: 0 0 0 12px;
+    font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-weight: 600;
+  }
+}
+
+.trigger {
+  color: white;
+  font-size: 20px;
+  position: relative;
+  text-align: center;
+  height: @menu-item-height;
+  line-height: @menu-item-height;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #002140;
+  overflow: hidden;
+}
+
+.sider {
+  position: relative;
+  z-index: 10;
+  //min-height: 100vh;
+  min-height: ~'calc(100vh - @{nav-header-height})';
+  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+
+  &.fixSiderbar {
+    position: fixed;
+    //top: 0;
+    top: @nav-header-height;
+    left: 0;
+    box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+
+    :global {
+      .ant-menu-root {
+        //height: ~'calc(100vh - @{nav-header-height})';
+        height: ~'calc(100vh - @{nav-header-height} - @{menu-item-height})';
+        overflow-y: auto;
+      }
+      .ant-menu-inline {
+        border-right: 0;
+        .ant-menu-item,
+        .ant-menu-submenu-title {
+          width: 100%;
+        }
+      }
+    }
+  }
+  &.projectMenu {
+    background-color: #e6e8eb;
+    :global {
+      .ant-menu {
+        background-color: inherit;
+        .ant-menu-submenu-title {
+          color: #4d4d4d;
+          margin: 0;
+          .ant-menu-submenu-arrow {
+            opacity: 1;
+            &::before,
+            &::after {
+              background: #4d4d4d;
+            }
+          }
+          &:hover {
+            color: #fff;
+            background-color: @primary-color;
+            a {
+              color: inherit;
+            }
+            .ant-menu-submenu-arrow {
+              &::before,
+              &::after {
+                background: #fff;
+              }
+            }
+          }
+        }
+        .ant-menu-sub {
+          box-shadow: none;
+          background-color: #f0f2f5;
+        }
+      }
+      .ant-menu-item {
+        color: #4d4d4d;
+        transition: none;
+        margin: 0;
+        &.ant-menu-item-selected {
+          color: #fff;
+          background-color: @primary-color
+        }
+        a {
+          color: inherit;
+        }
+        &:hover {
+          background-color: @primary-color;
+          color: #fff;
+        }
+        &::after {
+          border: none;
+        }
+      }
+    }
+  }
+  &.light {
+    box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+    background-color: #e6e8eb;
+    :global {
+      .ant-menu-light {
+        border-right-color: transparent;
+      }
+    }
+    .logo {
+      background: white;
+      box-shadow: 1px 1px 0 0 @border-color-split;
+
+      h1 {
+        color: @primary-color;
+      }
+    }
+
+    .trigger {
+      background: white;
+      color: @primary-color;
+      box-shadow: 1px 1px 0 0 @border-color-split;
+    }
+  }
+
+  .baseMenu {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+.appMenu {
+  padding-top: @nav-header-height;
+  :global {
+    .ant-menu-root{
+      .ant-menu-item {
+        font-size: 12px;
+        color: black;
+        padding-left: 20px;
+        margin: 0;
+        line-height: 50px;
+        height: 50px;
+        .anticon{
+          margin-right: 22px;
+        }
+        &.ant-menu-item-active {
+          color: @primary-color;
+          background-color: #fafafa;
+        }
+      }
+      .ant-menu-item-selected {
+        color: @primary-color;
+      }  
+    }
+  }
+}
+
+.icon {
+  width: 14px;
+  margin-right: 10px;
+}
+
+:global {
+  .top-nav-menu li.ant-menu-item {
+    height: @nav-header-height;
+    line-height: @nav-header-height;
+  }
+
+  .drawer .drawer-content {
+    background: #001529;
+  }
+
+  .ant-menu-inline-collapsed {
+    & > .ant-menu-item .sider-menu-item-img + span,
+    &
+      > .ant-menu-item-group
+      > .ant-menu-item-group-list
+      > .ant-menu-item
+      .sider-menu-item-img
+      + span,
+    & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
+      max-width: 0;
+      display: inline-block;
+      opacity: 0;
+    }
+  }
+
+  .ant-menu-item .sider-menu-item-img + span,
+  .ant-menu-submenu-title .sider-menu-item-img + span {
+    transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
+    opacity: 1;
+  }
+
+  .ant-drawer-left {
+    .ant-drawer-body {
+      padding: 0;
+    }
+  }
+}

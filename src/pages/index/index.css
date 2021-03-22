@@ -1,0 +1,12 @@
+.header {
+  height: 200px;
+  display: flex;
+  background-color: #5095ff;
+  font-size: 30px;
+  color: white;
+  text-align: center;
+}
+.menuItem {
+  flex: 1;
+  align-self: center;
+}

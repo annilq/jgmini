@@ -1,0 +1,96 @@
+@import '~antd/lib/style/themes/default.less';
+
+.calendar {
+  flex: 1;
+  //background-color: #e0e0e0;
+
+  :global {
+    //.ant-fullcalendar-fullscreen .ant-fullcalendar-selected-day .ant-fullcalendar-date {
+    //  background-color: @primary-color;
+    //  .ant-fullcalendar-value {
+    //    color: white;
+    //  }
+    //
+    //  .ant-badge-status-text{
+    //    color: white;
+    //  }
+    //}
+
+    .ant-fullcalendar-fullscreen .ant-fullcalendar-value {
+      font-weight: bold;
+    }
+
+    .ant-fullcalendar-fullscreen .ant-fullcalendar-content {
+      &::-webkit-scrollbar {
+        width: 0 !important;
+      }
+    }
+  }
+
+  .header {
+    padding: 10px 16px;
+    //background-color: #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 30px;
+      color: @text-color;
+    }
+  }
+
+  .cell {
+    .lunar {
+      font-size: 12px;
+      text-align: right;
+      color: @heading-color;
+      padding-bottom: 4px;
+    }
+
+    :global {
+      .ant-badge-status {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        text-overflow: ellipsis;
+
+        .ant-badge-status-text {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+.schedule {
+  flex: 1;
+  background-color: #f0f0f0;
+  .title {
+    padding: 10px 16px;
+    font-size: 30px;
+    color: @primary-color;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: #e0e0e0;
+  }
+
+  .taskItem {
+    color: @heading-color;
+    padding: 12px;
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bottom {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}

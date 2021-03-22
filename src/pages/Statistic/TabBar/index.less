@@ -1,0 +1,25 @@
+.tabbar{
+ padding: 0 30px;
+ text-align: center;
+ position: relative;
+ &:not(:first-child)::after{
+   content: "|";
+   position: absolute;
+   left: 0;
+   top: 6px;
+   color: #f0f0f0;
+   font-size: 20px;
+   line-height: 20px;
+ }
+  :global{
+    .ant-tabs-tab-btn{
+      font-size: 16px;
+    }
+    .ant-tabs-ink-bar{
+      display: none;
+    }
+    .ant-tabs-tab-active{
+      border-bottom: 4px solid #3a9dfe;
+    }
+  }
+}

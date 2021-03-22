@@ -1,0 +1,106 @@
+@import '~antd/lib/style/themes/default.less';
+
+.twoColLayout {
+  .salesCard {
+    height: calc(100% - 24px);
+  }
+  div[class^='ant-col']:last-child {
+    right: 0 \9;
+    height: 100% \9;
+    position: absolute \9;
+  }
+  :global {
+    .ant-row {
+      display: flex;
+      display: block \9;
+      flex-flow: row wrap;
+      position: relative \9;
+    }
+  }
+}
+
+.financeCard {
+  .financeBar {
+    padding: 0 32px 32px;
+  }
+  .financeRank {
+    padding: 0 32px 32px 72px;
+  }
+  :global {
+    .ant-tabs-bar {
+      padding-left: 16px;
+      border-bottom: none;
+      .ant-tabs-nav .ant-tabs-tab {
+        padding-top: 12px;
+        padding-bottom: 10px;
+        line-height: 20px;
+        font-size: 14px;
+      }
+    }
+    .ant-tabs-extra-content {
+      padding-right: 24px;
+      line-height: 55px;
+    }
+    .ant-card-head {
+      position: relative;
+    }
+    .ant-card-head-title {
+      align-items: normal;
+    }
+  }
+}
+
+.financeCardExtra {
+  height: inherit;
+}
+
+.financeTypeRadio {
+  position: absolute;
+  right: 54px;
+  bottom: 12px;
+}
+.financeExtraWrap {
+  :global {
+    .ant-input {
+      border: 0;
+      background-color: #fafafa;
+    }
+  }
+}
+.monthRangePicker {
+  :global {
+    .ant-calendar-footer .ant-calendar-time-picker-btn {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: @screen-lg) {
+  .financeExtra {
+    display: none;
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .financeCard .financeBar {
+    padding: 16px;
+  }
+}
+
+@media screen and (max-width: @screen-sm) {
+  .financeExtraWrap {
+    display: none;
+  }
+
+  .taskExtraWrap {
+    display: none;
+  }
+
+  .financeCard {
+    :global {
+      .ant-tabs-content {
+        padding-top: 30px;
+      }
+    }
+  }
+}

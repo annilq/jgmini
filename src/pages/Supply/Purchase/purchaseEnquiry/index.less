@@ -1,0 +1,43 @@
+.enquireList {
+  display: block;
+  padding: 10px 20px;
+}
+.enquireItem {
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 20px 0;
+}
+.form-info-item {
+  width: 50%;
+  padding: 12px 0;
+  height: auto;
+  overflow: hidden;
+  .form-info-label {
+    float: left;
+    width: 120px;
+    &::after {
+      content: ':';
+    }
+  }
+  .form-info-value {
+    color: #000;
+  }
+}
+.inputWidth {
+  width: 100%;
+}
+
+.record-form {
+  :global {
+    .ant-form-item {
+      display: flex;
+      .ant-form-item-label {
+        width: 120px;
+        flex: none;
+      }
+      .ant-form-item-control {
+        flex: 1;
+      }
+    }
+  }
+}

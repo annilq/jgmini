@@ -1,0 +1,97 @@
+.project {
+  color: #333;
+  display: flex;
+  justify-content: space-around;
+  .projectSummary,
+  .projectDetail {
+    background-color: #ffffff;
+    border-radius: 4px;
+  }
+  .projectSummary{
+    flex: 1;
+  }
+  .projectDetail {
+    flex: 2;
+    margin-left: 16px;
+  }
+  .content {
+    padding: 10px 20px;
+    line-height: 1;
+  }
+  .infoList {
+    height: auto;
+    overflow: hidden;
+    line-height: 34px;
+    margin-top: 16px;
+    .infoItem {
+      width: 50%;
+      float: left;
+      display: flex;
+      > div:nth-child(2n-1) {
+        text-align: right;
+        color: #9e9e9e;
+        min-width: 64px;
+        &::after {
+          content: ':';
+          margin: 0 5px;
+        }
+      }
+    }
+  }
+}
+.status {
+  padding: 0 10px;
+  margin-top: 30px;
+  line-height: 24px;
+  position: relative;
+  display: inline-block;
+  background-color: #000;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: -4px;
+    width: 0;
+    height: 0;
+    border-width: 4px;
+    border-style: solid;
+    border-color: transparent;
+    border-left-color: inherit;
+    transform: rotate(45deg);
+  }
+}
+// 待开工
+div[data-status='2'] {
+  background-image: linear-gradient(-90deg, #fbcc47 0%, #fbe448 100%);
+  color: #f6be1a;
+}
+// 竣工
+div[data-status='6'] {
+  background-image: linear-gradient(-90deg, #1890ff 0%, #097cb3 100%);
+  color: #097cb3;
+}
+// 勘察设计
+div[data-status='1'] {
+  background-image: linear-gradient(-90deg, #f67c1a 0%, #f65f0c 100%);
+  color: #f65f0c;
+}
+// 验收
+div[data-status='5'] {
+  background-image: linear-gradient(-90deg, #1af63e 0%, #26e91c 100%);
+  color: #26e91c;
+}
+// 工程筹备
+div[data-status='0'] {
+  background-image: linear-gradient(-90deg, #f61aee 0%, #e91cb2 100%);
+  color: #e91cb2;
+}
+// 在建
+div[data-status='4'] {
+  background-image: linear-gradient(-90deg, #4de1f4 0%, #0dcbe4 100%);
+  color: #0dcbe4;
+}
+// 未开工
+div[data-status='3'] {
+  background-color: #999999;
+  color: #999999;
+}
