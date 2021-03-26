@@ -35,9 +35,9 @@ const FormCodeServiceMap = {
   Depot: 'Database.Depot',
   User: 'System.User',
   UserGroup: 'System.UserGroup',
-  QualityCheck:"Field.QualityInspection",
-  Incentive:"Field.InspectionRap",
-  Reform:"Field.InspectionReform",
+  QualityCheck: "Field.QualityInspection",
+  Incentive: "Field.InspectionRap",
+  Reform: "Field.InspectionReform",
   // SafetyInspection: 'Field.SafetyInspection',
   // QualityInspection: 'Field.QualityInspection',
   //   task一个formCode对应几个service
@@ -52,7 +52,7 @@ type FormCodeType = keyof typeof FormCodeServiceMap;
 // 任务类型
 type TaskType = 'CreateList' | 'Charge' | 'ParticipateList' | 'ConfirmList';
 // 审批类型
-type Approval = 'myhandle' | 'mycreate' | 'finish' | 'copytome'| 'rejectservice';
+type Approval = 'myhandle' | 'mycreate' | 'finish' | 'copytome' | 'rejectservice';
 
 // 自定义表单类型
 type UserCreate = 'USERCREATE';
@@ -61,23 +61,8 @@ type ServiceType = Approval | TaskType | UserCreate;
 
 function getServiceFromFormCode(formCode: FormCodeType, type?: ServiceType) {
   // type === 'USERCREATE'说明是全自定义
-  let serviceName;
-  if (type === 'USERCREATE') {
-    type = null;
-    serviceName = FormCodeServiceMap['USERCREATE'];
-  } else {
-    serviceName = FormCodeServiceMap[formCode];
-  }
-
-  if (!serviceName) {
-    console.error(`${formCode}:has No service..........................................`);
-    return;
-  }
-  if (type) {
-    return get(Service, `${serviceName}.${type}`);
-  } else {
-    return get(Service, serviceName);
-  }
+  const serviceName = FormCodeServiceMap[formCode];
+  return get(Service, serviceName);
 }
 
 export { FormCodeType, ServiceType };
