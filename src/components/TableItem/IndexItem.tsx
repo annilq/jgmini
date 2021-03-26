@@ -34,7 +34,6 @@ function TableItemCell(props: IProps) {
         </View>
         <View> {children}</View>
       </View>
-
       <View
         className={styles['list-item-footer']}
       >

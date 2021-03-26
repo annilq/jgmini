@@ -1,116 +1,107 @@
-import React from 'react';
-import { Table, Popconfirm } from 'antd';
+import React, { useState } from 'react';
+import List from '@/components/DataList';
+import { View, Text } from 'remax/wechat';
+import SubTableItemCell from '@/components/TableItem/SubTableItem';
+import Layer from '@/components/Layer';
+import useLayerVisible from '@/hooks/useLayer';
+
+import Detail from '@/components/CustomForm/detail/detail';
+import styles from '@/components/CustomForm/index.less';
 
 import FormItemData from '@/components/CustomForm/FormItem/detail';
+import { getColumnsFromContainersByFliter, getSumRows, getSumRowsRender, getSumData } from '@/components/CustomForm/FormUtil';
 
 interface IProps {
-  editcols?: boolean;
   value: any[] | any;
-  editDetail?: () => void;
-  remove?: () => void;
+  title: string;
+  onEdit?: (index: any) => void;
+  showDetail?: (index: any) => void;
   containers: any[];
-  loading: boolean;
+  omitCols?: string[]
+  // 是否可展开(子表中包含子表)
+  expandable?: {
+    expandedRowRender: (record: any) => React.ReactElement;
+    rowExpandable: (record: any) => boolean,
+  }
 }
 
 function TableList(props: IProps) {
-  const { containers = [], value, editcols, loading } = props;
-  const initValue = value || [];
-  const getTableColumns = function(columnsData, isSum) {
+  const { containers = [], title, value, onEdit, omitCols, expandable: {
+    rowExpandable = (record: any) => false,
+    expandedRowRender = (record: any) => false
+  } = {} } = props;
+
+  const [visible, setVisible] = useLayerVisible(false);
+  const [recordIndex, setRecordIndex] = useState(-1);
+  const record = value[recordIndex]
+
+  const showDetail = function (index: number) {
+    setVisible(true);
+    setRecordIndex(index);
+  }
+
+  const getTableColumns = function (columnsData) {
     const columns = columnsData.map(item => ({
       title: item.controlLabel,
-      render: (text, record, index) => {
-        return isSum && index === initValue.length ? (
-          <span style={{ fontWeight: 'bold' }}>{text}</span>
-        ) : (
-          <FormItemData data={item} formdata={record} />
-        );
-      },
+      render: (_, record) => <FormItemData data={item} formdata={record} />,
       dataIndex: item.controlCode,
-      width: 200,
     }));
     return columns;
   };
 
-  const getColumnsFromContainers = function() {
-    const columnsData = containers.reduce(
-      (acc, container) => acc.concat(container.controls.filter(item => item.isdisplayInList)),
-      []
-    );
-    return columnsData;
-  };
-
-  const getSumRows = function(controls) {
-    const sumRows = [];
-    controls.forEach(item => {
-      const {
-        extraProps: { sum },
-      } = item;
-      if (sum) {
-        sumRows.push(item.controlCode);
-      }
-    });
-    return sumRows;
-  };
-
-  const getSumData = function(controls) {
-    const sumcontrols = getSumRows(controls);
-    let newData = initValue || [];
-    if (sumcontrols.length > 0) {
-      const firstCol = controls[0].controlCode;
-      const sumData: any = {
-        [firstCol]: '合计',
-      };
-
-      sumcontrols.forEach(sumitem => {
-        let num = 0;
-        newData.forEach(item => {
-          num += Number(item[sumitem]);
-        });
-        sumData[sumitem] = num;
-      });
-      newData = initValue.concat(sumData);
-    }
-    return newData;
-  };
-
-  const controls = getColumnsFromContainers();
-  const newData = getSumData(controls);
-  const newcolumns = getTableColumns(controls, getSumRows(controls).length);
-
-  const columns = [
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      width: 200,
-      render: (text, record, index) => {
-        // console.log(newData.length, index);
-        if (getSumRows(controls).length > 0 && newData.length - 1 === index) {
-          return false;
-        }
-        return (
-          <span>
-            <a onClick={() => props.editDetail(index)} style={{ marginRight: 8 }}>
-              编辑
-            </a>
-            <Popconfirm title="是否要删除此行？" onConfirm={() => props.remove(index)}>
-              <a>删除</a>
-            </Popconfirm>
-          </span>
-        );
-      },
-    },
-  ];
+  const controls = getColumnsFromContainersByFliter(containers);
+  const sumCols = getSumRowsRender(controls);
+  const sumData = getSumData(value, controls, getSumRows(controls));
+  let newcolumns = getTableColumns(controls);
+  // start 过滤掉需要删除的列 (added by hmy)
+  if (omitCols) {
+    newcolumns = newcolumns.filter((item) => omitCols.indexOf(item.dataIndex) < 0);
+  }
   return (
-    <Table
-      dataSource={newData}
-      rowKey="id"
-      loading={loading}
-      rowKey="id"
-      style={{ width: '100%', overflow: 'scroll' }}
-      columns={editcols ? [...newcolumns, ...columns] : newcolumns}
-      pagination={false}
-      className="table"
-    />
+    <>
+      <List
+        renderItem={(item, index) => {
+          const { exceedFlag } = item
+          return (
+            <List.Item style={{ padding: "12px 0px" }}>
+              <SubTableItemCell
+                data={item}
+                columns={newcolumns}
+                {...onEdit && { onEdit: () => onEdit(index) }}
+                // 有嵌套子表的则用新页面展示详情
+                {...rowExpandable(item) && { onDetail: () => showDetail(index) }}
+              />
+              {exceedFlag === "Y" && <Text style={{ color: "#ff4d4d", fontSize: "12px", width: "100%", lineHeight: "40px" }}>*数据已超过计划份额</Text>}
+            </List.Item>
+          )
+        }}
+        data={{ list: value }}
+      />
+      {/* 合计 */}
+      {sumCols.length > 0 && value.length > 0 && (
+        <>
+          <Text>合计</Text>
+          <SubTableItemCell
+            data={sumData}
+            columns={sumCols}
+          />
+        </>
+      )}
+      <Layer
+        visible={visible}
+        style={{ width: "100%" }}
+      >
+        {record && (
+          <View className={styles.baseForm}>
+            <Detail
+              containers={containers}
+              formdata={record}
+            >
+              {rowExpandable(record) && expandedRowRender(record)}
+            </Detail>
+          </View>)}
+      </Layer>
+    </>
   );
 }
 

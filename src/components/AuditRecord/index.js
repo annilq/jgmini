@@ -1,17 +1,19 @@
 import React from 'react';
-import { List, Tag } from 'antd';
+import { Tag } from 'annar';
+
+import List from '@/components/DataList';
+import { View, Text } from 'remax/wechat';
+import classNames from 'classnames';
+
 import { getApprovalTypeTextColor } from '@/utils/utils';
 import { connect } from 'react-redux';
 import FilePreview from '@/components/CustomForm/FilePreview';
 import ImagePreview from '@/components/CustomForm/ImagePreview';
+
 import styles from './index.less';
-import classNames from 'classnames';
 import Avatar from './avatar.png';
 
-@connect(({ workflow, loading }) => ({
-  workflow,
-  editLoading: loading.effects['workflow/queryAuditList'] || false,
-}))
+
 class AuditList extends React.Component {
   componentDidMount() {
     const { dispatch, instanceId } = this.props;
@@ -22,108 +24,103 @@ class AuditList extends React.Component {
     const {
       workflow: { auditList },
       editLoading,
+      ...rest
     } = this.props;
     return (
-      <div className={styles.approval}>
+      <View {...rest}>
         <List
-          loading={editLoading}
-          itemLayout="horizontal"
-          dataSource={auditList}
-          style={{ background: '#fafafa' }}
-          renderItem={item => (
-            <List.Item style={{ marginBottom: '8px', background: '#ffffff', padding: 0 }}>
-              <div
+          data={{ list: auditList }}
+          renderItem={(item) => (
+            <List.Item className={styles.auditItem}>
+              <View
+                style={{
+                  padding: '20px',
+                  flex: 1
+                }}
                 className={classNames({
                   [styles.tagDivCss]: item && item.operateType === 4,
                 })}
               >
-                <div style={{ fontSize: '14px',fontFamily:'Microsoft YaHei UI', padding: '21px 40px 16px 40px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <img
-                      src={item.avatar || Avatar}
-                      style={{
-                        borderRadius: '50%',
-                        width: '60px',
-                        height: '60px',
-                        objectFit: 'cover',
-                      }}
-                    />
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        marginLeft: '15px',
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <div style={{ width: '400px' }}>
-                          <span style={{ fontWeight: 'bold', color: '#333' }}>
-                            {item.operatorName}
-                          </span>
-                          <span style={{ color: '#999' }}>({item.nodeName})</span>
-                          <span style={{ fontWeight: 'bold', color: '#333' }}>
-                            ({item.spendTime})
-                          </span>
-                        </div>
-                        <div style={{ color: '#999' }}>{item.operateTime}</div>
-                      </div>
-                      {item.operateType === 4 ? (
-                        <div>
-                          <Tag className={styles.tagColor}>{item.operateTypeDesc}</Tag>
-                        </div>
-                      ) : (
-                        <div
-                          style={{
-                            color: `${getApprovalTypeTextColor(item.operateType)}`,
-                            marginTop: '3px',
-                          }}
+                <View style={{ display: 'flex' }}>
+                  <img
+                    src={item.avatar || Avatar}
+                    style={{
+                      borderRadius: '50%',
+                      width: '120px',
+                      height: '120px',
+                      objectFit: 'cover',
+                    }}
+                    alt="头像"
+                  />
+                  <View
+                    style={{
+                      marginLeft: '15px',
+                    }}
+                  >
+                    <View>
+                      <Text style={{ fontWeight: 'bold', color: '#333' }}>{item.operatorName}</Text>
+                      <Text style={{ color: '#999' }}>({item.nodeName})</Text>
+                      <Text style={{ fontWeight: 'bold', color: '#333' }}>({item.spendTime})</Text>
+                    </View>
+                    <View style={{ color: '#999' }}>{item.operateTime}</View>
+                    {item.operateType === 4 ? (
+                      <View>
+                        <Tag className={styles.tagColor}>{item.operateTypeDesc}</Tag>
+                      </View>
+                    ) : (
+                        <View style={{
+                          color: getApprovalTypeTextColor(item.operateType),
+                          marginTop: '3px'
+                        }}
                         >
                           [{item.operateTypeDesc}]
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {item.opinion ? (
-                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <div style={{ width: '75px', color: '#9e9e9e', textAlign: 'right' }}>
-                        审批意见：
-                      </div>
-                      <span style={{ fontWeight: 'bold' }}>{item.opinion}</span>
-                    </div>
-                  ) : null}
-                  {item.fileId ? (
-                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <div style={{ width: '75px', color: '#9e9e9e', textAlign: 'right' }}>
-                        附件：
-                      </div>
-                      <FilePreview files={item.fileId} />
-                    </div>
-                  ) : null}
-                  {item.picId ? (
-                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <div style={{ width: '75px', color: '#9e9e9e', textAlign: 'right' }}>
-                        图片：
-                      </div>
-                      <ImagePreview files={item.picId} />
-                    </div>
-                  ) : null}
-                  {item.changeHistory ? (
-                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <div style={{ width: '75px', color: '#9e9e9e', textAlign: 'right' }}>
-                        修改记录：
-                      </div>
-                      {item.changeHistory}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
+                        </View>
+                      )
+                    }
+                  </View>
+                </View>
+                {item.opinion && (
+                  <View className={styles.auditItemContent}>
+                    <View className={styles.label}>
+                      审批意见：
+                    </View>
+                    <Text style={{ fontWeight: 'bold' }}>{item.opinion}</Text>
+                  </View>
+                )}
+                {item.fileId && (
+                  <View className={styles.auditItemContent}>
+                    <View className={styles.label}>
+                      附件：
+                    </View>
+                    <FilePreview value={item.fileId} />
+                  </View>
+                )}
+                {item.picId && (
+                  <View className={styles.auditItemContent}>
+                    <View className={styles.label}>
+                      图片：
+                    </View>
+                    <ImagePreview value={item.picId} />
+                  </View>
+                )}
+                {item.changeHistory && (
+                  <View className={styles.auditItemContent}>
+                    <View className={styles.label}>
+                      修改记录：
+                    </View>
+                    {item.changeHistory}
+                  </View>
+                )}
+              </View>
             </List.Item>
           )}
         />
-      </div>
+      </View>
     );
   }
 }
 
-export default AuditList;
+export default connect(({ workflow, loading }) => ({
+  workflow,
+  editLoading: loading.effects['workflow/queryAuditList'] || false,
+}))(AuditList);

@@ -1,9 +1,7 @@
 // https://usehooks-typescript.com/react-hook/use-fetch
-import { useReducer } from 'react'
-import { useNativeEffect } from 'remax';
+import { useReducer,useEffect } from 'react'
 
 import request from '@/utils/request';
-import { flatdata } from '@/models/jgtablemodel';
 // State & hook output
 interface State<T> {
   status: 'init' | 'fetching' | 'error' | 'fetched'
@@ -42,7 +40,7 @@ function useFetch<T = unknown>(
     }
   }
   const [state, dispatch] = useReducer(fetchReducer, initialState)
-  useNativeEffect(() => {
+  useEffect(() => {
     if (!url) {
       return
     }

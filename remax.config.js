@@ -15,10 +15,11 @@ module.exports = {
     less({
       lessOptions: {
         globalVars: {
-          'primary-color': '"#4569d4"',
+          'primary-color': '"#4095ff"',
         },
       },
     }),
   ],
+  // compressTemplate:true
   // pxToRpx:false
 };

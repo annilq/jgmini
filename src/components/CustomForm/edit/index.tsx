@@ -4,25 +4,22 @@
 
 import React, { useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
+import { View, Text } from 'remax/wechat';
 
-import withRouter from 'umi/withRouter';
-import { RouteComponentProps } from 'react-router';
-
-import { Button, Col, notification, Row } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
-import Loading from '@/components/Loading';
-
+import { Button, Col, Row, Form, Skeleton } from 'annar';
 import { ConTypes } from '@/components/CustomForm/controlTypes';
 
-import Edit from './edit';
 import Approve from '@/components/CustomForm/Approve';
 import CopyTo from '@/components/CopyTo';
 import SectionHeader from '@/components/SectionHeader';
+import useFormConfig from '@/hooks/useFormConfig';
+import useRefresh from '@/hooks/useRefresh';
+
 import styles from '../index.less';
 
-import useFormConfig from '@/hooks/useFormConfig';
+import Edit from './edit';
 
-interface IProps extends FormComponentProps, RouteComponentProps {
+interface IProps {
   formCode: string;
   // 是否完全用户自定义
   ISUSERCREATE: boolean;
@@ -31,21 +28,19 @@ interface IProps extends FormComponentProps, RouteComponentProps {
 
 const initialState = {
   form: null,
-  showPrompt: true,
   approveProcessId: '',
   sendUsers: null,
+  nextNodeApprovers: null,
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'form':
-      return { ...state, form: action.data };
     case 'approveProcessId':
       return { ...state, approveProcessId: action.data };
     case 'sendUsers':
       return { ...state, sendUsers: action.data };
-    case 'showPrompt':
-      return { ...state, showPrompt: action.data };
+    case 'nextNodeApprovers':
+      return { ...state, nextNodeApprovers: action.data };
     default:
       throw new Error();
   }
@@ -65,20 +60,41 @@ function BaseForm(props: IProps) {
     submitloading,
     // table,
   } = props;
-  const [{ form, approveProcessId, sendUsers, showPrompt }, reactDispatch] = useReducer(
+
+  const { sysVersionId, versionId } = formdata;
+  const { tableConfig, loading } = useFormConfig(formCode, { sysVersionId, versionId });
+  const { containers = [], approvable } = tableConfig;
+  const values = { ...formdata, ...(curRouter.params || {}) };
+
+  const refresh = useRefresh();
+
+  const [{ approveProcessId, nextNodeApprovers, sendUsers }, reactDispatch] = useReducer(
     reducer,
     initialState
   );
-
+  const [form] = Form.useForm();
   // 如果有id就根据获取回显的详情数据
-  useEffect(() => {
-    if (id) {
-      dispatch({
-        type: 'jgTableModel/queryRemote',
-        payload: id,
-      });
-    }
-  }, []);
+  useEffect(
+    () => {
+      async function syncData() {
+        if (formdata.approveProcessId) {
+          reactDispatch({ type: 'approveProcessId', data: formdata.approveProcessId });
+        }
+        if (formdata.sendUsers) {
+          reactDispatch({ type: 'sendUsers', data: formdata.sendUsers });
+        }
+        if (formdata.nextNodeApprovers) {
+          reactDispatch({ type: 'nextNodeApprovers', data: formdata.nextNodeApprovers });
+        }
+        await form.setFieldsValue({ ...formdata, ...(curRouter.params || {}) });
+        refresh()
+      }
+      if (id && formdata.id) {
+        syncData()
+      }
+    },
+    [id, formdata]
+  );
 
   // 拓展字段exts提交格式
 
@@ -108,19 +124,14 @@ function BaseForm(props: IProps) {
     return {
       ...newData,
       // 判断是否有用户自定义表单
-      exts: JSON.stringify({ controls, versionId, sysVersionId }),
+      exts: JSON.stringify({ controls, versionId, sysVersionId, formCode }),
     };
   }
 
   // 提交数据
-  function handleSubmit(formValues, isDirty) {
+  function handleSubmit(formValues) {
     const promise = new Promise(resolve => {
       const { formName, approvable } = tableConfig;
-      // 如果没有修改直接返回数据
-      if (!isDirty) {
-        resolve(formValues);
-        return;
-      }
       const submitData = getSubmitData(formValues);
       // console.log(submitData);
       if (id) {
@@ -131,6 +142,8 @@ function BaseForm(props: IProps) {
             id,
             approveProcessId,
             sendUsers,
+            nextNodeApprovers,
+            formCode
           },
           callback(data) {
             if (data.code === 0) {
@@ -141,12 +154,12 @@ function BaseForm(props: IProps) {
       } else {
         if (ISUSERCREATE) {
           submitData.approvable = approvable;
-          submitData.formCode = formCode;
           submitData.formName = formName;
         }
+        // 添加到提交数据中方便后台查询
         dispatch({
           type: 'jgTableModel/addRemote',
-          payload: { ...submitData, approveProcessId, sendUsers },
+          payload: { ...submitData, approveProcessId, nextNodeApprovers, sendUsers, formCode },
           callback(data) {
             if (data.code === 0) {
               resolve({ id: data.resp });
@@ -158,131 +171,187 @@ function BaseForm(props: IProps) {
     return promise;
   }
 
+
+  function deleteFlow() {
+    dispatch({
+      type: 'jgTableModel/removeRemote', payload: id, callback() {
+        wx.showToast({ title: "删除成功" });
+        // NativeUtil.use("popWebHistory");
+      }
+    });
+  }
+
   // 保存表单数据
-  function saveFormData(formValues, isDirty) {
-    handleSubmit(formValues, isDirty).then(data => {
-      reactDispatch({ type: 'showPrompt', data: false });
-      notification.success({ message: '操作成功' });
-      props.history.goBack();
+  function saveFormData(formValues) {
+    handleSubmit(formValues).then(() => {
+      wx.showToast({ title: "操作成功" });
+      // NativeUtil.use("popWebHistory");
     });
   }
 
   // 提交审批表单数据
-  function submitToApprove(formValues, isDirty) {
-    if (!approveProcessId) {
-      notification.warn({ message: '请选择审批流程' });
-      return;
-    }
+  function submitToApprove(formValues) {
     const submitData = getSubmitData(formValues);
-    reactDispatch({ type: 'showPrompt', data: false });
     if (ISUSERCREATE) {
       const { formName, approvable } = tableConfig;
       submitData.approvable = !!approvable;
-      submitData.formCode = formCode;
       submitData.formName = formName;
     }
     dispatch({
       type: 'jgTableModel/approve',
       payload: {
         ...submitData,
-        id: id,
+        id,
         approveProcessId,
         sendUsers,
+        nextNodeApprovers,
+        formCode
       },
       callback: () => {
-        notification.success({ message: '提交审批成功' });
-        props.history.goBack();
+        wx.showToast({ title: "提交审批成功" })
+        // NativeUtil.use("popWebHistory");
       },
     });
-    // handleSubmit(formValues, isDirty).then((data: any) => {
-    //   reactDispatch({ type: 'showPrompt', data: false });
-    //   dispatch({
-    //     type: 'jgTableModel/approve',
-    //     payload: {
-    //       id: data.id,
-    //       approveProcessId,
-    //       sendUsers,
-    //     },
-    //     callback: () => {
-    //       notification.success({ message: '提交审批成功' });
-    //       props.history.goBack();
-    //     },
-    //   });
-    // });
   }
 
-  const { sysVersionId, versionId } = formdata;
-  const { tableConfig, loading } = useFormConfig(formCode, { sysVersionId, versionId }, !!id);
-  const { containers = [], approvable } = tableConfig;
-  const values = { ...formdata, ...(curRouter.params || {}) };
+  function validateFields(fn) {
+    form
+      .validateFields()
+      .then(values => {
+        fn(values);
+      })
+      .catch(err => {
+        const { errorFields } = err;
+        wx.showToast({ title: errorFields[0].errors.toString() })
+      });
+  }
+
+  // 判断是否需要验证超出预警
+  function checkExceed(formValues, fn) {
+    // 目前只有合同、付款与结算需要预警,在这里写死
+    const checkExceedArrFormcode = ["outContract", "PaymentFinance", "Settle"];
+    // 如果不需要验证，直接走之前的逻辑
+    if (!checkExceedArrFormcode.includes(formCode)) {
+      fn(formValues)
+      return
+    }
+    const submitData = getSubmitData(formValues);
+    if (ISUSERCREATE) {
+      const { formName, approvable } = tableConfig;
+      submitData.approvable = !!approvable;
+      submitData.formName = formName;
+    }
+    dispatch({
+      type: 'jgTableModel/checkExceed',
+      payload: {
+        ...submitData,
+        id: id,
+        formCode
+      },
+      callback: (resp) => {
+        if (resp === "Y") {
+          wx.showModal({
+            title: '审批预警提示',
+            content: '部分数据可能超出计划,是否继续执行审批',
+            okText: '是',
+            cancelText: '取消',
+            success(res) {
+              if (res.confirm) {
+                fn(formValues)
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
+            }
+          })
+        } else {
+          fn(formValues)
+        }
+      },
+    });
+  }
   return (
-    <Loading loading={loading}>
-      <div className={styles.baseForm}>
-        <Edit
-          iseditmode={id ? 1 : 0}
-          formCode={formCode}
-          containers={containers}
-          formdata={values}
-          showPrompt={showPrompt}
-          constValues={curRouter.params}
-          wrappedComponentRef={formRef => {
-            // 该函数调用过多，会持续触发reactDispatch
-            // 如果有实例引用则不在触发reactDispatch
-            // console.log(formRef);
-            !form && formRef && reactDispatch({ type: 'form', data: formRef });
-          }}
-        >
-          {children}
-        </Edit>
-        {approvable && (
-          <div style={{ padding: '0 20px 20px', backgroundColor: '#fff' }}>
-            <SectionHeader
-              title="审批流程"
-              style={{ width: '100%', lineHeight: '50px', marginBottom: '0', paddingLeft: '8px' }}
-            />
-            <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-              <Col span={24}>
+    <Skeleton loading={loading} active>
+      <View className={styles.baseForm}>
+        <View style={{ flex: 1, maxWidth: "100%" }}>
+          <Edit
+            iseditmode={id ? true : false}
+            formCode={formCode}
+            containers={containers}
+            // 本来不需要formdata的，但是会导致DataPicker默认显示不出值
+            formdata={values}
+            form={form}
+            constValues={curRouter.params}
+          >
+            {children}
+          </Edit>
+          {approvable && (
+            <View style={{ padding: '0 12px 20px', backgroundColor: '#fff' }}>
+              <SectionHeader
+                title="选择审批流程"
+                style={{ width: '100%', lineHeight: '50px', marginBottom: '0', paddingLeft: '8px' }}
+              />
+              <Row gutter={{ md: 8, lg: 24, xl: 48 }} style={{ padding: '0', margin: '0' }}>
                 <Approve
                   formCode={formCode}
-                  onChange={data => {
-                    reactDispatch({ type: 'approveProcessId', data });
+                  onChange={({ approveProcessId, nextNodeApprovers }) => {
+                    reactDispatch({ type: 'approveProcessId', data: approveProcessId });
+                    reactDispatch({ type: 'nextNodeApprovers', data: nextNodeApprovers });
                   }}
-                  value={approveProcessId}
+                  formdata={values}
+                  value={{ approveProcessId, nextNodeApprovers }}
                 />
-              </Col>
-              <Col span={24}>
-                <CopyTo
-                  onChange={data => {
-                    reactDispatch({ type: 'sendUsers', data });
-                  }}
-                  value={sendUsers}
-                />
-              </Col>
-            </Row>
-          </div>
-        )}
-        <div className="actionBtns" >
-          <Button
-            type="primary"
-            style={{ padding: '0 20px' }}
-            disabled={submitloading}
-            onClick={() => form.validateFields(saveFormData)}
-          >
-            保存
-          </Button>
-          {approvable && (
-            <Button
-              type="danger"
-              style={{ marginLeft: '16px' }}
-              onClick={() => form.validateFields(submitToApprove)}
-              disabled={submitloading}
-            >
-              提交审批
-            </Button>
+                <Col span={24} style={{ padding: '0', marginTop: 10 }}>
+                  <CopyTo
+                    onChange={data => {
+                      reactDispatch({ type: 'sendUsers', data });
+                    }}
+                    formdata={values}
+                    value={sendUsers}
+                  />
+                </Col>
+              </Row>
+            </View>
           )}
-        </div>
-      </div>
-    </Loading>
+          <View className="actionBtns" style={{ backgroundColor: "#fafafa" }}>
+            {approvable && (
+              <Button
+                type="primary"
+                onClick={() => validateFields((values) => {
+                  if (!approveProcessId) {
+                    message.warn('请选择审批流程');
+                    return;
+                  } checkExceed(values, submitToApprove)
+                })}
+                disabled={submitloading}
+              >
+                提交审批
+              </Button>
+            )}
+            <Button
+              style={{
+                backgroundColor: '#ffa646',
+                color: '#fff',
+                border: 'none',
+
+              }}
+              disabled={submitloading}
+              onClick={() => validateFields((values) => checkExceed(values, saveFormData))}
+            >
+              保存
+            </Button>
+            {id && (
+              <Button
+                type="danger"
+                onClick={deleteFlow}
+                disabled={submitloading}
+              >
+                删除
+              </Button>
+            )}
+          </View>
+        </View>
+      </View>
+    </Skeleton>
   );
 }
 

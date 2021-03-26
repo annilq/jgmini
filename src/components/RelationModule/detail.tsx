@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import TableList from '@/components/CustomForm/SubTable/detail';
-
-import request from '@/utils/request';
+import React, { useState, useMemo } from 'react';
+import { View ,Text} from "remax/wechat"
 import { relation as api } from '@/services/api';
+import useFormConfig from '@/hooks/useFormConfig';
+import useFetch from '@/hooks/useFetch';
 
-import Pagination from '@/components/Pagination';
+import TableList from './detailList';
 
 interface ModuleInte {
   domainFormName: string;
@@ -20,40 +20,49 @@ interface IProps {
 
 function RelationModule(props: IProps) {
   const { data, domainFormCode } = props;
-  const { domainId } = data;
+  const { domainId, relateFormCode } = data;
+  const [params, setParams] = useState(null);
 
-  const [datalist, setModuledata] = useState([]);
+  const { data: datalist = { list: [] } } = useFetch<JGListData>(api.getRelateList, { ...data, domainFormCode, domainId, ...params });
+  const { data: totalData } = useFetch(api.getRelateAmount, { ...data, domainFormCode, domainId, ...params });
+  const { tableConfig, loading } = useFormConfig(relateFormCode);
 
-  async function getModules(params = {}) {
-    const response = await request<any>(api.getRelateList, {
-      data: { ...data, domainFormCode, ...params },
-    });
-    // console.log(response);
-    if (response && response.resp) {
-      const { list, ...rest } = response.resp;
-      setModuledata({ list, ...rest });
+  const totalSum = useMemo(() => {
+    if (totalData && Object.keys(totalData).length > 0) {
+      return Object.keys(totalData).map(sumCode => {
+        for (let index = 0; index < tableConfig.containers.length; index++) {
+          const container = tableConfig.containers[index];
+          const targetControl = container.controls.find(control => control.controlCode === sumCode);
+          if (targetControl) {
+            return <Text style={{ marginRight: 5 }}>{targetControl.controlLabel}:{totalData[sumCode]}</Text>
+          }
+          return false
+        }
+      })
     }
-  }
-  function paginationChange(params = {}) {
-    getModules(params);
-  }
-  useEffect(
-    () => {
-      getModules();
-    },
-    [domainId]
-  );
+    return false
+  }, [totalData, tableConfig])
   return (
     <>
-      <TableList
-        value={datalist.list}
-        extraProps={{ formCode: data.relateFormCode, referenceType: 1 }}
-        store={window.g_app._store}
-      />
-      <Pagination
-        data={datalist}
-        onPaginationChange={paginationChange}
-      />
+      <View>
+        <TableList
+          loadMore={setParams}
+          value={datalist}
+          containers={tableConfig.containers}
+          loading={loading}
+        />
+      </View>
+      {totalSum && (
+        <View style={{
+          padding: "15px 10px",
+          backgroundColor: "#4095ff",
+          color: "#fff",
+          wordBreak: "keep-all",
+          whiteSpace: "nowrap",
+          overflow: "scroll"
+        }}>合计：{totalSum}</View>
+      )
+      }
     </>
   );
 }

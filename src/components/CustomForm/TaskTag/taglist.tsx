@@ -1,5 +1,7 @@
 import React from 'react';
-import { Tag } from 'antd';
+import { Tag } from 'annar';
+import { View, Text } from 'remax/wechat';
+
 import style from './index.less';
 
 function TagList({ value=[], onChange, ...rest }) {
@@ -11,10 +13,10 @@ function TagList({ value=[], onChange, ...rest }) {
       {...rest}
       {...onChange && { onClick: () => onChange(item) }}
     >
-      <span className={style.dot}>&#9679;</span>
+      <Text className={style.dot}>&#9679;</Text>
       {item.name}
     </Tag>
   ));
-  return <div className={style.taglist}>{list}</div>;
+  return <View className={style.taglist}>{list}</View>;
 }
 export default TagList;

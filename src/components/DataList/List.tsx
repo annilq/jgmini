@@ -8,9 +8,9 @@ interface Iprops {
 const List = (props: Iprops) => {
   const { dataSource, renderItem } = props
   return (
-    <View>
+    <>
       {dataSource.map((item, index) => renderItem(item, index))}
-    </View>
+    </>
   );
 };
 List.Item = View

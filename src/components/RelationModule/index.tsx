@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Tabs } from 'antd';
-import RelateDetail from './detail';
-import request from '@/utils/request';
+import React from 'react';
+import { Tabs } from 'annar';
+import { View } from "remax/wechat"
 import { relation as api } from '@/services/api';
+import useFetch from '@/hooks/useFetch';
+import RelateDetail from './detail';
 
-const { TabPane } = Tabs;
+const { TabContent } = Tabs;
 
 interface IProps {
   domainFormCode: string;
@@ -14,49 +15,28 @@ interface IProps {
 interface ModuleInte extends IProps {
   domainFormName: string;
   relateFormCode: string;
-}
-interface ModuleRes extends IProps {
-  code: number;
-  info: string;
-  resp: ModuleInte[];
+  count: number;
 }
 
 function RelationModule(props: IProps) {
   const { domainFormCode, domainId } = props;
-  const [modules, setModules] = useState([]);
-  useEffect(
-    () => {
-      async function getModules() {
-        const data = await request<ModuleRes>(api.getRelateMenuList, {
-          data: { domainFormCode, domainId },
-        });
-        // console.log(data);
-        if (data && data.resp) {
-          setModules(data.resp);
-        }
-      }
-      if (domainId && domainFormCode)
-        getModules();
-    },
-    [domainFormCode, domainId]
-  );
+  const { data = [] } = useFetch<ModuleInte[]>(api.getRelateMenuList, { domainFormCode, domainId });
 
-  if (modules.length === 0) {
+  if (!data || data.length === 0) {
     return (
-      <div style={{ lineHeight: '70px', textAlign: 'center', backgroundColor: '#fff' }}>
+      <View style={{ lineHeight: '70px', textAlign: 'center', backgroundColor: '#fff' }}>
         暂无关联模块
-      </div>
+      </View>
     );
   }
-  const modulitems = modules.map(item => (
-    <TabPane
-      // tab={<Badge count={item.count} offset={[20,0]}>{item.domainFormName}</Badge>}
+  const modulitems = data.map(item => (
+    <TabContent
       tab={item.domainFormName}
       key={item.relateFormCode}
     >
       <RelateDetail data={item} domainFormCode={domainFormCode} />
-    </TabPane>
+    </TabContent>
   ));
-  return <Tabs tabBarStyle={{ backgroundColor: '#fff' }}>{modulitems}</Tabs>;
+  return <Tabs type="plain" >{modulitems}</Tabs>;
 }
 export default RelationModule;

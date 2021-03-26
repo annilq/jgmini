@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from "remax/wechat"
 import styles from './index.less';
 
 /**
@@ -7,15 +8,15 @@ import styles from './index.less';
  * @description 区域头部标题
  */
 export default ({ title, children, ...rest }) => (
-  <div className={styles.sectionHeader} {...rest}>
+  <View className={styles.sectionHeader} {...rest}>
     {title} {children}
-  </div>
+  </View>
 );
 
 export function SectionHeader2({ title, children, ...rest }) {
   return (
-    <div className={styles.sectionHeader2} {...rest}>
+    <View className={styles.sectionHeader2} {...rest}>
       {title} {children}
-    </div>
+    </View>
   );
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Cell, Button, Card, } from 'annar';
+import { Form, Cell, Button, Card } from 'annar';
 import { usePageEvent } from 'remax/macro';
 
 import { connect } from "react-redux"
@@ -21,20 +21,27 @@ const Login = (props) => {
         from: 'pc',
       },
       callback() {
-        wx.setStorageSync('user', {
+        wx.setStorageSync('logininfo', {
           tenantName: tenantName.trim(),
           loginName: loginName.trim(),
           password
         })
         wx.switchTab({
           url: '/pages/index/index',
-        })
+        });
+        // 获取用户数据
+        dispatch({
+          type: 'account/userRemote',
+        });
+        dispatch({
+          type: 'global/fetchGlobalConstant',
+        });
       }
     });
   };
 
   usePageEvent('onShow', () => {
-    const user = wx.getStorageSync('user');
+    const user = wx.getStorageSync('logininfo');
     console.log(user);
     form.setFieldsValue(user)
   })
@@ -43,7 +50,7 @@ const Login = (props) => {
     <Card contentStyle={{ padding: '20px 0 20px' }}>
       <Form
         onFinish={handleFinish}
-        initialValues={wx.getStorageSync('user')}
+        initialValues={wx.getStorageSync('logininfo')}
       // initialValues={{ tenantName: "江西建设", loginName: "小二", password: "123456" }}
       >
         <Form.Item

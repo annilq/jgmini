@@ -24,6 +24,7 @@ export default {
       const response = yield call(user);
       if (response) {
         const { resp } = response;
+        wx.setStorageSync('user', resp);
         yield put({
           type: 'user',
           payload: resp,

@@ -5,6 +5,7 @@ module.exports = {
     'pages/login/index',
     'pages/user/index',
     'pages/task/index',
+    'pages/approvepage/index',
   ],
   window: {
     navigationBarTitleText: '云建管',

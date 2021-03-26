@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Switch, Radio, Checkbox, Select, DatePicker } from 'antd';
+import { Input, Switch, Radio, Checkbox, Cell, Picker } from 'annar';
 import FormEvent from '@/utils/formevent';
 import styles from '../index.less';
 import { ConTypes } from '../controlTypes';
@@ -20,18 +20,16 @@ import {
   TaskTag,
 } from '@/components/CustomForm';
 
-import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
+// import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
-const { Option } = Select;
-const { TextArea } = Input;
 
 enum EmitType {
   onChange = 1,
   onSelect,
 }
 
-@ErrorBoundary('组件渲染错误')
+// @ErrorBoundary('组件渲染错误')
 class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
   onChange = (e, id) => {
     // 如果不触发onChange事件，表单验证会失败
@@ -145,7 +143,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
     // data 表单配置项数据
     // form 表单form引用，用来设置关联值
     // formProps:{formdata,onChange ,value,id}接口数据，用来获取关联值
-    const { data, form, id, value, formdata, parentformdata,iseditmode } = this.props;
+    const { data, form, id, value, formdata, parentformdata, iseditmode } = this.props;
     // 表单属性
     const { extraProps, placeHolder, controlType } = data;
     // console.log(this.props);
@@ -173,8 +171,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         break;
       case ConTypes.TEXTAREA:
         com = (
-          <TextArea
-            rows={data.row}
+          <Input
             className={styles.widgetContent}
             placeholder={placeHolder}
             {...formProps}
@@ -235,11 +232,20 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             {...formProps}
           >
             {(candidates, rest) => (
-              <Select placeholder={placeHolder} {...rest} allowClear>
-                {candidates.map(item => (
-                  <Option key={item.value}>{item.label}</Option>
-                ))}
-              </Select>
+              <Cell.Picker
+                icon="musicfill"
+                label="LINE UP"
+                align="right"
+                arrow
+                range={candidates}
+                rangeKey="value"
+                placeholder={placeHolder} {...rest}
+              />
+              // <Select placeholder={placeHolder} {...rest} allowClear>
+              //   {candidates.map(item => (
+              //     <Option key={item.value}>{item.label}</Option>
+              //   ))}
+              // </Select>
             )}
           </DataSelecter>
         );
@@ -253,9 +259,9 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
           />
         );
         break;
-      case ConTypes.DATERANGE:
-        com = <RangePicker className={styles.widgetContent} {...formProps} />;
-        break;
+      // case ConTypes.DATERANGE:
+      //   com = <RangePicker className={styles.widgetContent} {...formProps} />;
+      //   break;
       case ConTypes.SWITCH:
         com = (
           <Switch

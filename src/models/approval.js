@@ -21,6 +21,7 @@ export default {
     detail: {},
     editVisible: false,
     workFlowData: {},
+    flowData:{},
     auditList: [],
     canModifyColumn: [],
   },

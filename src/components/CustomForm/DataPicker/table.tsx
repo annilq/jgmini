@@ -1,81 +1,63 @@
 import React from 'react';
+
 import FormItemData from '@/components/CustomForm/FormItem/detail';
-import TableWithPagination from '@/components/TableWithPagination';
+import List from '@/components/DataList';
+import PickerItemCell from '@/components/TableItem/PickerItem';
 
 import useFormConfig from '@/hooks/useFormConfig';
+import { getColumnsFromContainersByFliter } from '@/components/CustomForm/FormUtil';
 
 interface IProps {
   formCode: string;
   data: any;
-  onPaginationChange: (opthions: any) => void;
+  loadMore: (opthions: any) => void;
   [index: string]: any;
 }
 
 function Index(props: IProps) {
-  const { data = {}, parentformdata, formCode, onPaginationChange, ...rest } = props;
-  const { tableConfig, loading } = useFormConfig(formCode, null, false);
+  const {
+    data = {},
+    formCode,
+    loadMore,
+    loading: dataloading,
+    rowSelection,
+    rowKey = "id"
+  } = props;
+  const { tableConfig, loading: tableloading } = useFormConfig(formCode);
 
   // 根据配置获取表格列表项目
   function getTableColumns(columnsData) {
     const columns = columnsData.map(item => ({
       title: item.controlLabel,
       render: (text, record) => <FormItemData data={item} formdata={record} />,
-      id: item.controlCode,
-      width: 200,
+      dataIndex: item.controlCode,
+      // width: 200,
     }));
     return columns;
   }
+  const columnsData = getColumnsFromContainersByFliter(tableConfig.containers);
+  const columns = getTableColumns(columnsData);
 
-  function getColumnsFromContainers(containers) {
-    const { parentformdata } = props;
-    const columnsData = containers.reduce(
-      (acc, container) =>
-        acc.concat(
-          container.controls.filter(item => {
-            const {
-              extraProps: { displayInListForms },
-            } = item;
-            // console.log(parentformdata);
-            // console.log(displayInListForms);
-            if (displayInListForms) {
-              //  displayInListForms取值格式为 parentformCode.formCode|parentformCode.formCode...
-              // 可以在关联数据列表显示，不在首页列表显示
-              const displayMaps = displayInListForms.split('|').map(item => {
-                const [parentformCode2, formCode2] = item.split('.');
-                return { parentformCode2, formCode2 };
-              });
-              const obj =
-                displayMaps.find(item => item.parentformCode2 === parentformdata.formCode) || {};
-              const { parentformCode2, formCode2 } = obj;
-              return (
-                item.isdisplayInList ||
-                (parentformCode2 === parentformdata.formCode &&
-                  (!formCode2 || formCode === formCode2))
-              );
-            } else {
-              return item.isdisplayInList;
-            }
-          })
-        ),
-      []
-    );
-    const columns = getTableColumns(columnsData);
-    return columns;
-  }
-
-  const columns = getColumnsFromContainers(tableConfig.containers);
-
+  const listHeight = {
+    height: 'calc(100vh - 56px)',
+    overflowY: 'scroll',
+    paddingBottom: "70px"
+  };
   return (
-    <TableWithPagination
-      loading={loading}
-      rowKey="id"
-      data={data}
-      columns={columns}
-      className="table"
-      style={{ height: '420px', overflow: 'scroll' }}
-      onPaginationChange={onPaginationChange}
-      {...rest}
-    />
+    <div style={listHeight}>
+      <List
+        renderItem={data => (
+          <List.Item>
+            <PickerItemCell data={data} columns={columns} />
+          </List.Item >
+        )}
+        loading={tableloading || dataloading}
+        data={data}
+        loadMore={loadMore}
+        rowSelection={rowSelection}
+        rowKey={rowKey}
+      />
+    </div>
   );
 }
 

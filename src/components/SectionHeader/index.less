@@ -1,37 +1,36 @@
-@import '~antd/lib/style/themes/default.less';
 
 .sectionHeader {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 32px;
+  margin-bottom: 40px;
 
   &:before {
     content: '';
     display: inline-block;
     width: 0;
     height: 0;
-    vertical-align: -0.125em;
-    border-width: 8px 1.5px;
+    vertical-align: -0.25em;
+    border-width: 16px 3px;
     border-style: solid;
-    border-color: @primary-color;
-    border-radius: 1px;
+    border-radius: 2px;
     position: relative;
-    right: 8px;
+    right: 16px;
+    color:#4095ff; 
   }
 }
 
 .sectionHeader2 {
-  font-size: 16px;
-  margin: 12px 0 4px 24px;
+  font-size: 32px;
+  margin: 24px 0 8px 48px;
 
   &:before {
     content: '';
     display: inline-block;
-    width: 4px;
-    height: 16px;
-    vertical-align: -0.125em;
-    background: linear-gradient(#1833ff, @primary-color); /* 标准的语法 */
-    border-radius: 16px;
+    width: 8px;
+    height: 32px;
+    vertical-align: -0.25em;
+    background:#4095ff; 
+    border-radius: 32px;
     position: relative;
-    right: 10px;
+    right: 20px;
   }
 }

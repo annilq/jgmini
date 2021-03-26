@@ -1,15 +1,17 @@
 import React from 'react';
-import { Button, Modal } from 'antd';
-
+import { Button } from 'annar';
 import Edit from '@/components/CustomForm/edit/edit';
 
+import Layer from '@/components/Layer';
+import LayerHeader from '@/components/LayerHeader';
+import styles from '@/components/CustomForm/index.less';
+import TableWrapper from "@/components/CustomForm/SubTable/tableWrapper"
 import TableList from './tableList';
-import styles from '../index.less';
+import tableStyles from "./index.less"
 
 interface SubTableStates {
   data: any;
   visible: boolean;
-  showPrompt: boolean;
   // 用来判断是否是编辑
   editIndex: number;
 }
@@ -18,14 +20,21 @@ class EditableTable extends React.Component<JgFormProps.IFormProps, SubTableStat
   state = {
     data: {},
     visible: false,
-    showPrompt: true,
     editIndex: -1,
   };
+
   form: any;
+
   isSum: boolean;
 
   addRecord = () => {
-    this.setState({ data: {}, visible: true, showPrompt: false, editIndex: -1 });
+    const { tableConfig } = this.props;
+    const { formCode } = tableConfig;
+    if (!formCode) {
+      wx.showToast({ title: "请先选择表单类型" });
+      return
+    }
+    this.setState({ data: {}, visible: true, editIndex: -1 });
   };
 
   remove = index => {
@@ -35,20 +44,21 @@ class EditableTable extends React.Component<JgFormProps.IFormProps, SubTableStat
   };
 
   editDetail = index => {
-    const { value } = this.props;
+    const { value, form } = this.props;
     // 修改的时候标注index，修改不跟进id判断，直接根据index判断
-    this.setState({ data: value[index], visible: true, showPrompt: false, editIndex: index });
+    form.setFieldsValue(value[index]);
+    this.setState({ data: value[index], visible: true, editIndex: index });
   };
 
   // 单个询价记录修改
   onConfirm = newData => {
     const { value = [], tableConfig = {} } = this.props;
-    const { sysVersionId, versionId } = tableConfig;
+    const { sysVersionId, versionId, formCode } = tableConfig;
     const { editIndex } = this.state;
     if (editIndex === -1) {
-      value.push({ ...newData, exts: JSON.stringify({ sysVersionId, versionId }) });
+      value.push({ ...newData, exts: JSON.stringify({ sysVersionId, versionId, formCode }) });
     } else {
-      value.splice(editIndex, 1, { ...newData, exts: JSON.stringify({ sysVersionId, versionId }) });
+      value.splice(editIndex, 1, { ...newData, exts: JSON.stringify({ sysVersionId, versionId, formCode }) });
     }
     this.onChange(value);
   };
@@ -56,62 +66,70 @@ class EditableTable extends React.Component<JgFormProps.IFormProps, SubTableStat
   onChange(value) {
     const { onChange } = this.props;
     onChange(value);
-    this.onCancel();
+    // NativeUtil.use("popWebHistory");
+    wx.navigateBack()
   }
 
   onCancel = () => {
-    this.setState({ visible: false, showPrompt: false });
+    const { form } = this.props;
+    form.resetFields()
+    this.setState({ visible: false });
   };
 
+  validateFields = (fn) => {
+    const { form } = this.props;
+    form
+      .validateFields()
+      .then(values => {
+        fn(values);
+      })
+      .catch(err => {
+        const { errorFields } = err;
+        wx.showToast({ title: errorFields[0].errors.toString() });
+      });
+  }
+
   render() {
-    const { data, visible, showPrompt } = this.state;
-    const { formdata, parentFormCode, tableConfig, value } = this.props;
-    if (!tableConfig) {
-      return false;
-    }
+    const { data, visible, editIndex } = this.state;
+    const { formdata, parentFormCode, tableConfig, value, form, omitCols } = this.props;
     const { containers, formName, formCode } = tableConfig;
     return (
-      <div>
-        <TableList
-          value={value}
-          containers={containers}
-          editcols
-          editDetail={this.editDetail}
-          remove={this.remove}
-        />
-        <Modal
-          destroyOnClose
-          title={formName}
+      <div className={tableStyles.table}>
+        <TableWrapper onAddItem={this.addRecord} >
+          <div className={tableStyles["table-body"]}>
+            <TableList
+              value={value}
+              containers={containers}
+              onEdit={this.editDetail}
+              omitCols={omitCols}
+            />
+          </div>
+        </TableWrapper>
+        <Layer
+          type="drawer"
+          title={
+            <LayerHeader
+              onClose={this.onCancel}
+              title={formName}
+            />
+          }
           visible={visible}
-          onCancel={this.onCancel}
-          width="80vw"
-          footer={null}
-          className={styles.baseForm}
+          width="100%"
         >
-          <Edit
-            containers={containers}
-            formCode={formCode}
-            formdata={data}
-            parentformdata={{ formCode: parentFormCode, formdata }}
-            showPrompt={showPrompt}
-            wrappedComponentRef={form => (this.form = form)}
-          />
-          <Button
-            type="primary"
-            onClick={() => this.form.validateFields(this.onConfirm)}
-            style={{ marginBottom: '24px' }}
-          >
-            保存
-          </Button>
-        </Modal>
-        <Button
-          style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
-          type="dashed"
-          onClick={this.addRecord}
-          icon="plus"
-        >
-          新增
-        </Button>
+          <div className={styles.baseForm}>
+            <Edit
+              containers={containers}
+              formCode={formCode}
+              formdata={data}
+              parentformdata={{ formCode: parentFormCode, formdata }}
+              form={form}
+            />
+            <div className="actionBtns">
+              {editIndex !== -1 && <Button onClick={() => { this.remove(editIndex) }}>删除</Button>}
+              <Button type="primary" style={{ flex: "2" }} onClick={() => this.validateFields(this.onConfirm)}>保存</Button>
+            </div>
+          </div>
+        </Layer>
       </div>
     );
   }

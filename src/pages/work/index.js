@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text } from 'remax/wechat';
-import { Tabs, Card } from 'annar';
-const { TabContent } = Tabs;
+import { View } from 'remax/wechat';
+import { Tabs } from 'annar';
+import { usePageEvent } from 'remax/macro';
+
 import List from '@/components/DataList';
 import IndexItemCell from '@/components/TableItem/IndexItem';
 import ApproveStatusButton from '@/components/StatusButton/ApproveStatusButton';
 
 import useFetch from '@/hooks/useFetch';
 import { workflowApproval as api } from '@/services/api';
+const { TabContent } = Tabs;
 
 const tabs = [
   {
@@ -84,23 +86,16 @@ const FlowList = (props) => {
   }
   const [params, setParams] = useState({});
   const { data = { list: [] }, status } = useFetch(url, params);
-  // 分页、排序、筛选变化时触发
-  const handleStandardTableChange = (params) => {
-    // dispatch({ type: 'workflow/pageRemote', payload: params });
-  };
-
   // 展开编辑
   const showDetail = (record) => {
     const { bizId, id, formCode, type, taskDetailId } = record;
-    const searchParams1 = new URLSearchParams();
-    searchParams1.append('bizId', bizId);
-    searchParams1.append('id', id);
-    searchParams1.append('formCode', formCode);
-    searchParams1.append('type', type);
-    searchParams1.append('taskDetailId', taskDetailId);
-    history.push(`/approvepage?${searchParams1.toString()}`);
+    wx.navigateTo({
+      url: `/pages/approvepage/index?id=${id}&bizId=${bizId}&formCode=${formCode}&type=${type}&taskDetailId=${taskDetailId}`,
+    })
   };
-  console.log(data);
+  usePageEvent('onPullDownRefresh', () => {
+    console.log('onPullDownRefresh');
+  })
   return (
     <List
       renderItem={(data) => (
@@ -113,11 +108,11 @@ const FlowList = (props) => {
       loading={status === "fetching"}
       data={data}
       loadMore={(params) => {
-        handleStandardTableChange(params)
+        console.log(params);
+        setParams(params)
       }}
     />
   );
 };
-
 
 export default Index

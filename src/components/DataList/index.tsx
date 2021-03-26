@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'remax/wechat';
 import { usePageEvent } from 'remax/macro';
 import { Checkbox, Radio } from 'annar';
 import List from './List';
@@ -7,19 +6,19 @@ import styles from "./index.less"
 interface Iprops {
   data: {
     list: any[];
-    currentPage: number;
-    pageSize: number;
-    totalPage: number;
+    currentPage?: number;
+    pageSize?: number;
+    totalPage?: number;
   };
   renderItem: (data: any, index: number) => React.ReactElement;
-  loadMore: (params: any) => void;
+  loadMore?: (params: any) => void;
   rowSelection?: {
     onChange: (selectedRowKeys, selectedRows) => void;
     selectedRowKeys: any[];
     type: 'checkbox' | 'radio';
   };
-  loading: boolean;
-  rowKey: string
+  loading?: boolean;
+  rowKey?: string
 }
 
 function Main(props: Iprops) {
@@ -57,6 +56,7 @@ function Main(props: Iprops) {
     }
   }
   usePageEvent('onReachBottom', () => {
+    console.log('onReachBottom');
     !loading && data.currentPage < data.totalPage &&
       loadMore({
         currentPage: data.currentPage + 1,
@@ -66,11 +66,9 @@ function Main(props: Iprops) {
 
   return (
     // 这里如果外面包一层的话不会触发loadMore
-    // <Spin spinning={loading} style={{ width: '100%', height: '100%' }}>
-    <View>
+    <>
       {RenderList}
-    </View>
-    // </Spin>
+    </>
   );
 }
 

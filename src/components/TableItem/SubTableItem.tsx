@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DownOutlined, UpOutlined, FormOutlined } from '@ant-design/icons';
-import { Divider } from 'antd';
+import { View, Text } from 'remax/wechat';
+
 import styles from './index.less';
 
 interface IProps {
@@ -10,12 +10,11 @@ interface IProps {
   onEdit?: () => void;
   // 默认是展开收起模式，遇到表格嵌套，则展示方式切换为右侧滑出页面
   onDetail?: () => void;
-  children?: any;
   index?: number
 }
 
 function TableItemCell(props: IProps) {
-  const { columns = [], data = {}, index, onDetail, onEdit, children } = props;
+  const { columns = [], data = {}, index, onDetail, onEdit } = props;
   // 默认显示三条
   const defalutColsLength = 3;
   const showExpandBtn = columns.length > defalutColsLength;
@@ -43,26 +42,25 @@ function TableItemCell(props: IProps) {
   );
   const { exceedFlag } = data
   return (
-    <div className={`${styles['list-item']} ${exceedFlag === "Y" ? styles["warnRow"] : ""}`} style={{ margin: "0 4px" }}>
-      <div className={styles['list-item-container']}>
-        <div className={styles['list-item-content']}>
-          {cols.map((column) => (
-            <div key={column.title} data-from="detail">
-              <div style={{ maxWidth: 120, minWidth: 70 }}>{column.title}:</div>
+    <View className={`${styles['list-item']} ${styles["subtable-item"]} ${exceedFlag === "Y" ? styles["warnRow"] : ""}`} style={{ margin: "0 4px" }}>
+      <View className={styles['list-item-container']}>
+        {cols.map((column) => (
+          <View className={styles['list-item-content']} data-from="detail">
+            <View>{column.title}:</View>
+            <View>
               {column.render
                 ? column.render(data[column.dataIndex], data, index)
                 : (data[column.dataIndex] || "无数据")}
-            </div>
-          ))}
-        </div>
-      </div>
-      {children}
+            </View>
+          </View>
+        ))}
+      </View>
       {
         // 有编辑或者展开按钮都显示footer
         (showExpandBtn || onEdit) && (
-          <div className={styles.indicator} >
+          <View className={styles.indicator} >
             {showExpandBtn && (
-              <div onClick={(e) => {
+              <View onClick={(e) => {
                 e.stopPropagation();
                 if (onDetail) {
                   onDetail()
@@ -72,18 +70,18 @@ function TableItemCell(props: IProps) {
               }}
                 className={styles.expondBtn}
               >
-                {isToggle ? <>收起<UpOutlined /> </> : <>查看<DownOutlined /> </>}
-              </div>)}
-            {showExpandBtn && onEdit && <Divider type="vertical" style={{ height: 28, borderColor: "#d9d9d9", alignSelf: "center" }} />}
+                {isToggle ? "收起" : "查看"}
+              </View>)}
+            {showExpandBtn && onEdit && <Text>|</Text>}
             {onEdit && (
-              <div onClick={onEdit} className={styles.editBtn}>
-                编辑<FormOutlined />
-              </div>
+              <View onClick={onEdit} className={styles.editBtn}>
+                编辑
+              </View>
             )}
-          </div>
+          </View>
         )
       }
-    </div >
+    </View>
   );
 }
 

@@ -1,30 +1,5 @@
-// import getServiceFromFormCode from '@/components/CustomForm/FormCodeService';
+import getServiceFromFormCode from '@/components/CustomForm/FormCodeService';
 import request from '@/utils/request';
-import { project as api } from '@/services/api';
-
-export async function list(params) {
-  return request(api.list, { data: params });
-}
-
-export async function query(params) {
-  return request(api.query, { data: params });
-}
-
-export async function remove(params) {
-  return request(api.remove, { data: params });
-}
-
-export async function add(params) {
-  return request(api.add, { data: params });
-}
-
-export async function update(params) {
-  return request(api.update, { data: params });
-}
-
-export async function approve(params) {
-  return request(api.approve, { data: params });
-}
 
 export function flatdata(data) {
   const { exts, ...rest } = data || {};
@@ -192,15 +167,14 @@ export default {
       yield put({ type: 'listRemote', payload: { ...params, ...payload } });
     },
 
-    *queryRemote({ payload = {}, callback }, { put, select, call }) {
+    *queryRemote({ formCode, payload = {}, callback }, { put, select, call }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
-      // console.log(curRouter);
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const serviceObject = getServiceFromFormCode(formCode);
       if (!serviceObject) {
         console.log('no service');
         return;
       }
-      if (!query) {
+      if (!serviceObject.query) {
         yield put({ type: 'dataId', payload: payload });
         // 执行回调，方便展开
         if (callback) callback();
@@ -209,7 +183,7 @@ export default {
         return;
       }
       // 根据id在基础表查基础数据，在子表查询拓展数据
-      const baseResp = yield call(query, { id: payload });
+      const baseResp = yield call(serviceObject.query, payload);
       if (baseResp) {
         const { resp } = baseResp;
         if (resp) {

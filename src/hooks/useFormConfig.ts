@@ -25,17 +25,12 @@ function useFormConfig(formCode, params: IParams = {}) {
   useEffect(() => {
     async function getConfig(configParams: nameConfig) {
       setLoading(true);
-      let formConfig = getLocalFormConfig(configParams);
-      if (!formConfig) {
-        formConfig = await getFormConfig(configParams);
-        saveLocalFormConfig(configParams, formConfig);
-      }
+      const  formConfig = await getFormConfig(configParams);
       if (formConfig) {
         setConfig(formConfig);
       }
       setLoading(false);
     }
-
     if (!formCode) {
       return;
     }
@@ -48,22 +43,6 @@ function useFormConfig(formCode, params: IParams = {}) {
   }, [formCode, sysVersionId, versionId]);
 
   return { tableConfig: config, loading };
-}
-
-function genetateName({ formCode, sysVersionId, versionId }) {
-  // 根据版本号和formCode生成表单配置名字
-  return `${formCode}-sysVersionId-${sysVersionId || 'fresh'}-versionId-${versionId || 'fresh'}`;
-}
-
-function saveLocalFormConfig(nameConfig, config) {
-  const name = genetateName(nameConfig);
-  sessionStorage.setItem(name, JSON.stringify(config));
-}
-
-function getLocalFormConfig(nameConfig) {
-  const name = genetateName(nameConfig);
-  const formConfig = sessionStorage.getItem(name);
-  return formConfig && JSON.parse(formConfig);
 }
 
 export default useFormConfig;

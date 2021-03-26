@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { Tag, Popover, Button } from 'antd';
+import { Tag, Button } from 'annar';
+import { View } from 'remax/wechat';
 import api from '@/services/task/tag';
 import style from './index.less';
 import TagList from './taglist';
@@ -50,8 +51,8 @@ function TaskTag({ dispatch, onChange, value: defaultValue, formdata }) {
     [projectId]
   );
   return (
-    <div>
-      <Popover
+    <View>
+      {/* <Popover
         placement="top"
         content={<TagListPopover onChange={onChangeHandle} onClose={() => setvisible(false)} />}
         trigger="click"
@@ -60,9 +61,9 @@ function TaskTag({ dispatch, onChange, value: defaultValue, formdata }) {
         <Tag color="#f50" className={style.tag} onClick={() => setvisible(true)}>
           +添加
         </Tag>
-      </Popover>
+      </Popover> */}
       <TagList value={value} closable onClose={removeTag} />
-    </div>
+    </View>
   );
 }
 
@@ -80,14 +81,14 @@ function TagListPopover({ onChange, onClose }) {
     getList();
   }, []);
   return (
-    <div style={{ width: '480px' }}>
+    <View style={{ width: '480px' }}>
       <TagList value={value} onChange={onChange} />
-      <div style={{ textAlign: 'center', marginTop: '30px' }}>
+      <View style={{ textAlign: 'center', marginTop: '30px' }}>
         <Button type="primary" size="small" onClick={onClose}>
           确认
         </Button>
-      </div>
-    </div>
+      </View>
+    </View>
   );
 }
 

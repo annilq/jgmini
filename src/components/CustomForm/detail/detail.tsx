@@ -3,8 +3,10 @@
 // 如果是修改sysVersionId,versionId取值来源拓展字段，新增的话取表单配置
 
 import React, { PureComponent } from 'react';
-
+import { View } from 'remax/wechat';
 import FormItemData from '@/components/CustomForm/FormItem/detail';
+import { ConTypes } from '@/components/CustomForm/controlTypes';
+// import SectionHeader from '@/components/SectionHeader';
 
 import styles from '../index.less';
 
@@ -16,11 +18,12 @@ interface IProps {
   [index: string]: any;
 }
 
+
 class FormDetail extends PureComponent<IProps> {
   // 将当前控件依赖controlCode的extraProps属性存到当前控件中
   getObserverExtraProps = referenceField => {
     const { containers } = this.props;
-    for (let index = 0; index < containers.length; index++) {
+    for (let index = 0; index < containers.length; index + 1) {
       const container = containers[index];
       const control = container.controls.find(item => item.controlCode === referenceField);
       if (control) {
@@ -30,28 +33,47 @@ class FormDetail extends PureComponent<IProps> {
     }
   };
 
+  lawfulValues = (value) => {
+    return !(value === null || value === undefined || (Array.isArray(value) && value.length === 0))
+  }
+
   getFormItem = data => {
     const { formdata } = this.props;
     const {
       extraProps: { referenceField },
+      controlCode,
+      controlType,
+      controlLabel,
+      controlId,
+      comment
     } = data;
     if (referenceField) {
       const observerextraprops = this.getObserverExtraProps(referenceField);
       data.observerextraprops = observerextraprops;
     }
-
+    let labelwrap = false
+    switch (data.controlType) {
+      case ConTypes.SUBTABLE:
+      case ConTypes.RelationData:
+      case ConTypes.IMAGEUPLOADER:
+      case ConTypes.FILEUPLOADER:
+      case ConTypes.INVOICE:
+        labelwrap = true
+        break;
+      default:
+        break;
+    }
     return (
-      <div
-        data-id={data.controlId}
-        key={data.controlId}
-        data-controltype={data.controlType}
-        className="form-info-item"
+      this.lawfulValues(formdata[controlCode]) && (<View
+        data-id={controlId}
+        key={controlId}
+        className={`form-info-item controltype${controlType}`}
       >
-        <div className="form-info-label">{data.controlLabel}</div>
-        <div className="form-info-value">
+        <View className="form-info-label">{controlLabel}</View>
+        <View className="form-info-value">
           <FormItemData data={data} formdata={formdata} />
-        </div>
-      </div>
+        </View>
+      </View>)
     );
   };
 
@@ -66,29 +88,30 @@ class FormDetail extends PureComponent<IProps> {
       // 详情默认添加创建人和创建时间
       if (currentIndex === 0) {
         forms.push(
-          <div key="creatorName" className="form-info-item">
-            <div className="form-info-label">创建人</div>
-            <div className="form-info-value">{formdata.creatorName}</div>
-          </div>,
-          <div key="creatorTime" className="form-info-item">
-            <div className="form-info-label">创建时间</div>
-            <div className="form-info-value">{formdata.createTime}</div>
-          </div>,
-          formdata.sendUsers && (
-            <div key="sendUsers" className="form-info-item">
-              <div className="form-info-label">抄送人</div>
-              <div className="form-info-value">
-                {JSON.parse(formdata.sendUsers)
-                  .map(item => item.name)
-                  .join(',')}
-              </div>
-            </div>
-          )
+          <> {formdata.creatorName && <View key="creatorName" className="form-info-item">
+            <View className="form-info-label">创建人</View>
+            <View className="form-info-value">{formdata.creatorName}</View>
+          </View>}
+            {formdata.createTime && <View key="creatorTime" className="form-info-item">
+              <View className="form-info-label">创建时间</View>
+              <View className="form-info-value">{formdata.createTime}</View>
+            </View>}
+            {formdata.sendUsers && (
+              <View key="sendUsers" className="form-info-item">
+                <View className="form-info-label">抄送人</View>
+                <View className="form-info-value">
+                  {JSON.parse(formdata.sendUsers)
+                    .map(item => item.name)
+                    .join(',')}
+                </View>
+              </View>
+            )}
+          </>
         );
       }
 
       const formContainer = (
-        <div
+        <View
           key={container.containerId}
           className="containers"
           style={{
@@ -96,8 +119,8 @@ class FormDetail extends PureComponent<IProps> {
             textAlign: container.align || 'left',
           }}
         >
-          <div className="form-container-content">{forms}</div>
-        </div>
+          <View className="form-container-content">{forms}</View>
+        </View>
       );
       return acc.concat(formContainer);
     }, []);
@@ -107,7 +130,7 @@ class FormDetail extends PureComponent<IProps> {
     const { containers, children } = this.props;
     const forms = this.getForms(containers);
     return (
-      <div
+      <View
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -118,8 +141,8 @@ class FormDetail extends PureComponent<IProps> {
       >
         {forms}
         {children}
-      </div>
+      </View>
     );
   }
 }
-export default FormDetail;
+export default (FormDetail);

@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Form } from 'annar';
+
 import useFormConfig from '@/hooks/useFormConfig';
 import useFormCode from '@/hooks/useFormCode';
+// import Edit from '@/components/EditRowForm';
 import Edit from './edit';
 
 interface IProps extends JgFormProps.IFormProps {
@@ -25,9 +28,11 @@ function SubTableEdit(props: IProps) {
     formdata,
     value: datavalue,
     onChange,
+    dispatch,
+    omitCols,
     ...rest
   } = props;
-
+  const [form] = Form.useForm();
   const formCode = useFormCode({
     extraProps,
     configParam: { observerextraprops, formdata, ConstantMap },
@@ -37,25 +42,27 @@ function SubTableEdit(props: IProps) {
   const value = datavalue || [];
   const { tableConfig, loading } = useFormConfig(
     formCode,
-    value[0] && value[0].exts && JSON.parse(value[0].exts),
-    !!iseditmode && value[0] && value[0].exts
+    value[0] && value[0].exts && JSON.parse(value[0].exts)
   );
   if (!tableConfig) {
     return false;
   }
 
   function onValueChange(value) {
-    onChange(value);
+    onChange([...value]);
   }
+
   // formdata一定要传下去，不然子表引用不能获取到父级
   return (
     <Edit
+      {...rest}
       tableConfig={tableConfig}
       formdata={formdata}
       onChange={onValueChange}
       value={value}
       loading={loading}
-      {...rest}
+      form={form}
+      omitCols={omitCols}
     />
   );
 }

@@ -1,9 +1,8 @@
 /* eslint-disable no-undef */
-import React, { useRef, useState } from 'react';
-import { Button, Input, Popover, notification, Modal, Form } from 'antd';
-import { ExclamationCircleOutlined } from "@ant-design/icons"
+import React from 'react';
+import { Button, Form, Textarea } from 'annar';
 import { connect } from 'react-redux';
-import { layerContentStyle } from '@/common/styles/layer';
+import { View } from "remax/wechat"
 
 import { ImageUpload, DataPicker } from '@/components/CustomForm';
 import SectionHeader from '@/components/SectionHeader';
@@ -11,8 +10,6 @@ import useFormConfig from '@/hooks/useFormConfig';
 import { getColumnsFromContainersByFliter } from '@/components/CustomForm/FormUtil';
 import { ConTypes } from '@/components/CustomForm/controlTypes';
 import RejectTo from './RejectTo';
-import Comment from './comment';
-
 const FormItem = Form.Item;
 
 function AuditForm(props) {
@@ -26,9 +23,7 @@ function AuditForm(props) {
     canModifyColumn,
     loading,
   } = props;
-  const formRef = useRef();
-
-  const [{ names, value }, setApprovers] = useState({ names: "", value: "" });
+  const [formInstance] = Form.useForm();
   const { tableConfig } = useFormConfig(formCode);
   const columnsData = getColumnsFromContainersByFliter(tableConfig.containers, () => true);
 
@@ -47,39 +42,43 @@ function AuditForm(props) {
   const notify = (formValues, fn) => {
 
     if (exceedFlag === "Y") {
-      Modal.confirm({
+      wx.showModal({
         title: '审批预警提示',
-        icon: <ExclamationCircleOutlined />,
         content: '部分数据可能超出计划,是否继续执行审批',
-        okText: '是',
+        confirmText: '是',
         cancelText: '取消',
-        onOk: () => {
-          fn(formValues)
+        success: (res) => {
+          if (res.confirm) {
+            fn(formValues)
+          }
         }
       })
     } else {
       fn(formValues)
     }
   };
-
+  const getFormValue = async () => {
+    const value = await formInstance.getFieldsValue();
+    console.log(value);
+    return Promise.resolve(value)
+  }
   const approval = (formValues) => {
-    formRef.current.validateFields().then((values) => {
+    getFormValue().then((values) => {
       dispatch({
         type: 'workflow/approval',
         payload: {
           taskId,
           id,
           ...values,
-          ...(approveForm.isFieldsTouched() &&
-            canModifyColumn.length > 0 && { canModifyColumn: getModifyData(formValues) }),
+          ...(canModifyColumn.length > 0 && { canModifyColumn: getModifyData(formValues) }),
         },
         callback: () => {
-          notification.info({
-            message: `审批成功`,
-            description: '审批成功',
+          wx.showModal({
+            title: `审批成功`,
+            content: '审批成功',
             duration: 2,
-            onClose() {
-              NativeUtil.use("close");
+            success(res) {
+              wx.navigateBack()
               // NativeUtil.use("updateProcess");
             }
           });
@@ -89,12 +88,14 @@ function AuditForm(props) {
   };
 
   const reject = (formValues, rejectParam) => {
-    formRef.current.validateFields().then((values) => {
+    getFormValue().then((values) => {
       // 驳回时候填写审批意见
+      console.log(values);
       if (!values.remark) {
-        notification.warn({
-          message: '请输入审批意见',
-        });
+        wx.showToast({
+          title: '请输入审批意见',
+          iocn: "none"
+        })
         return;
       }
       dispatch({
@@ -104,16 +105,15 @@ function AuditForm(props) {
           taskId,
           ...rejectParam,
           ...values,
-          ...(approveForm.isFieldsTouched() &&
-            canModifyColumn.length > 0 && { canModifyColumn: getModifyData(formValues) }),
+          ...(canModifyColumn.length > 0 && { canModifyColumn: getModifyData(formValues) }),
         },
         callback: () => {
-          notification.info({
-            message: `审批成功`,
-            description: '审批成功',
+          wx.showModal({
+            title: `审批成功`,
+            content: '审批成功',
             duration: 2,
-            onClose() {
-              NativeUtil.use("close");
+            success(res) {
+              wx.navigateBack()
               // NativeUtil.use("updateProcess");
             }
           });
@@ -125,17 +125,17 @@ function AuditForm(props) {
   };
 
   const pass = () => {
-    formRef.current.validateFields().then((values) => {
+    getFormValue().then((values) => {
       dispatch({
         type: 'workflow/pass',
         payload: { taskId, id, ...values },
         callback: () => {
-          notification.info({
-            message: `审批成功`,
-            description: '审批成功',
+          wx.showModal({
+            title: `审批成功`,
+            content: '审批成功',
             duration: 2,
-            onClose() {
-              NativeUtil.use("close");
+            success(res) {
+              wx.navigateBack()
               // NativeUtil.use("updateProcess");
             }
           });
@@ -148,105 +148,51 @@ function AuditForm(props) {
 
   // 验证审批时候可以修改的表单
   const validateUpdateForm = (fn) => {
-    approveForm.validateFields().then(fn);
+    const [valid] = approveForm.validateFields()
+    if (valid) {
+      fn(approveForm.getFieldsValue())
+    }
   };
 
-  const onSelectApprovers = (data) => {
-    const names = data && data.map(item => item.name).join(',');
-    const newData = data && data.map(({ name, id }) => ({
-      name,
-      id,
-    }));
-    formRef.current.setFieldsValue({ nextNodeApprovers: JSON.stringify(newData) });
-    setApprovers({ names })
-  }
-
-  const onApproversValueChanged = (value) => {
-    setApprovers({ value, names: null })
-  }
-
   return (
-    <div className="aduit-content" style={{ backgroundColor: '#fff', padding: '0 12px', position: "relative", marginTop: "10px" }}>
+    <View className="aduit-content" style={{ backgroundColor: '#fff', position: "relative", marginTop: "20px" }}>
       <SectionHeader
         title="审批"
-        style={{ marginLeft: 8, marginBottom: 0, lineHeight: "30px" }}
+        style={{ marginLeft: 40, marginBottom: 0, lineHeight: "60px" }}
       />
-      <Form
-        layout="vertical"
-        style={{ ...layerContentStyle }}
-        ref={formRef}
-      >
-        <FormItem name="remark" label="审批意见">
-          <Comment />
+      <Form form={formInstance}>
+        <FormItem name="remark" valueAlign="left">
+          <Textarea rows={4} placeholder="请输入审批意见" />
         </FormItem>
-        {/* 
-              <FormItem name="fileId" label="附件">
-                <FileUpload />
-              </FormItem>
-            */}
-        <FormItem name="picId">
+        <FormItem name="picId" valueAlign="left">
           <ImageUpload label="图片" />
         </FormItem>
-        {canAddApprover === "Y" && (
-          <FormItem name="nextNodeApprovers" label="下一级审批人">
-            <DataPicker
-              extraProps={{
-                formCode: 'User',
-                multiple: true,
-              }}
-              placeholder="审批人"
-              onSelect={data => onSelectApprovers(data)}
-              onChange={data => onApproversValueChanged(data)}
-              formdata={{ nextNodeApprovers: value }}
-            >
-              <Input
-                value={names}
-                placeholder="审批人"
-                style={{ flex: 1, verticalAlign: 'middle' }}
-              />
-            </DataPicker>
-          </FormItem>
-        )
-        }
         {!loading && (
-          <div className="actionBtns">
+          <View className="actionBtns">
             <Button
-              onClick={() => validateUpdateForm((values) => notify(values, pass))}
-              disabled={loading}
+              shape="square"
+              onTap={() => validateUpdateForm((values) => notify(values, pass))}
               style={{ backgroundColor: "#08ba7c", color: "#fff", border: "none" }}
             >
               保留意见
               </Button>
-            <Popover
-              content={
-                <RejectTo
-                  taskId={taskId}
-                  handleReject={(data) => {
-                    validateUpdateForm((values) => reject(values, data));
-                  }}
-                />
-              }
-              title="驳回到"
-              trigger="click"
-            >
-              <Button
-                type="danger"
-                disabled={loading}
-              >
-                驳回
-                </Button>
-            </Popover>
+            <RejectTo
+              taskId={taskId}
+              handleReject={(data) => {
+                validateUpdateForm((values) => reject(values, data));
+              }}
+            />
             <Button
+              shape="square"
               type="primary"
-              onClick={() => validateUpdateForm((values) => notify(values, approval))}
-              disabled={loading}
+              onTap={() => validateUpdateForm((values) => notify(values, approval))}
             >
               通过
               </Button>
-          </div>
+          </View>
         )}
       </Form>
-    </div>
+    </View>
   );
 }
 

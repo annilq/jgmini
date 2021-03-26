@@ -1,19 +1,12 @@
 import React from 'react';
+import { View, Text } from 'remax/wechat';
 import ReactDOM from 'react-dom';
-import { createBrowserHistory } from 'history';
 import Layer from '@/components/Layer';
 import LayerHeader from '@/components/LayerHeader';
-
-const history = createBrowserHistory();
 
 class LayerPage {
   state = { containers: [] };
   static LayerPageMap = {};
-  constructor() {
-    history.listen(() => {
-      LayerPage.destroyAll();
-    });
-  }
 
   static destroyAll = () => {
     Object.keys(LayerPage.LayerPageMap).forEach(id => LayerPage.close(id));

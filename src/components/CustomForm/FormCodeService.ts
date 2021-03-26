@@ -20,6 +20,7 @@ const FormCodeServiceMap = {
   PurchaseEnquiry: 'Purchase.PurchaseEnquiry',
   PurchaseNeed: 'Purchase.PurchaseNeed',
   PurchaseDepotIn: 'Supply.DepotIn',
+  SalaryFinance: 'Finance.Salary',
   ReturnDepotIn: 'Supply.ReturnDepotIn',
   DepotOut: 'Supply.DepotOut',
   RefundDepotOut: 'Supply.RefundDepotOut',

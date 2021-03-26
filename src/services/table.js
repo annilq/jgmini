@@ -3,7 +3,7 @@ import { tableConfig as api } from '@/services/api';
 import { getStateData } from '@/models/menu';
 
 export const getFormConfig = async params => {
-  const user = getStateData('account.user');
+  const user = wx.getStorageSync('user');
   const data = await request(api.query, { data: { ...params, cid: user.tenantId } });
   if (data) {
     const { containers, ...rest } = data.resp;

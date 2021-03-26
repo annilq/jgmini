@@ -1,4 +1,5 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
+import { useNativeEffect } from "remax"
 import { connect } from 'react-redux';
 
 interface constants {
@@ -14,7 +15,7 @@ interface SelectorProps {
 
 interface IProps {
   extraProps: SelectorProps;
-  global?: { ConstantMap: { [index: string]: constants[] } };
+  ConstantMap: { [index: string]: constants[] };
 }
 interface ConnectProps {
   constantloading?: boolean;
@@ -23,46 +24,52 @@ interface ConnectProps {
 }
 function maptoProps({ global, loading }) {
   return {
-    global,
+    ConstantMap: global.ConstantMap,
     constantloading: loading.effects['global/fetchGlobalConstant'] || false,
   };
 }
-@connect(maptoProps)
-class DataSelector extends PureComponent<IProps & ConnectProps> {
-  queryData = () => {
-    const {
-      extraProps: { flag, type, candidates },
-      global: { ConstantMap },
-      constantloading,
-      dispatch,
-    } = this.props;
-    let data = [];
-    if (type === 1) {
-      data = candidates;
-      return data;
-    } else if (type === 2) {
-      if (flag && ConstantMap[flag]) {
-        data = ConstantMap[flag];
-      } else if (!constantloading) {
-        dispatch({ type: 'global/fetchGlobalConstant' });
-      }
-      return this.tranformData(data);
-    }
-  };
 
+function DataSelector(props: IProps & ConnectProps) {
+  const {
+    children,
+    extraProps: { flag, type, candidates },
+    ConstantMap,
+    constantloading,
+    dispatch,
+    ...rest
+  } = props;
+  const [data, setData] = useState([]);
+
+  useNativeEffect(
+    () => {
+      switch (type) {
+        case 1:
+          setData(candidates);
+          break;
+        case 2:
+          if (!flag) {
+            console.warn('no flag!!!!!!!!!!!');
+            return;
+          }
+          const mapData = ConstantMap[flag];
+          if (mapData) {
+            setData(tranformData(mapData));
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    [flag, type, ConstantMap]
+  );
   // 将数据转换成antd数据源的格式
-  tranformData = data => {
+  function tranformData(data) {
     return data.map(item => {
       const { value, key, ...rest } = item;
       return { label: value, value: key, ...rest };
     });
-  };
-
-  render() {
-    const data = this.queryData();
-    const { children, extraProps, ...rest } = this.props;
-    return <>{children(data, rest)}</>;
   }
+  return <>{children(data, rest)}</>;
 }
 
-export default DataSelector;
+export default connect(maptoProps)(DataSelector);

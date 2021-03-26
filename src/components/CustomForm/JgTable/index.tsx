@@ -1,53 +1,81 @@
-import React, {useEffect} from 'react';
-import {View, Text, Button} from 'react-native';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 
-// import {Tag, List, Avatar} from 'antd';
-import {connect} from 'react-redux';
-// import Link from 'umi/link';
-
-// import FormItemData from '@/components/CustomForm/FormItem/detail';
-// import {getLocalCols} from '@/utils/table';
-// import {getApprovalStatusColor, getApprovalStatusText} from '@/utils/utils';
+import List from '@/components/DataList';
+import FormItemData from '@/components/CustomForm/FormItem/detail';
 
 import useFormConfig from '@/hooks/useFormConfig';
+import ApproveStatusButton from '@/components/StatusButton/ApproveStatusButton';
+import { getColumnsFromContainersByFliter } from '@/components/CustomForm/FormUtil';
 
 interface IProps {
   formCode: string;
   data: any;
-  // 用户自定义列头
-  customCols?: any[];
   tableConfig: JgFormProps.FormConfig;
   [index: string]: any;
 }
 
 function Index(props: IProps) {
-  const {formCode, data} = props;
+  const { ListItem, onPageChanged, formCode, dataLoading, data, showDetail, dispatch } = props;
 
-  const {tableConfig} = useFormConfig(formCode, null, false);
+  const { tableConfig } = useFormConfig(formCode);
+  const { approvable, containers } = tableConfig;
+
+  // 获取用户设置的显示行
+  function getUserSettingColumns(columns = []) {
+    return columns.filter((item) => item.isdisplayInList !== false);
+  }
+
+  // 根据配置获取表格列表项目
+  function getTableColumns(columnsData) {
+    const columns = columnsData.map((item) => ({
+      title: item.controlLabel,
+      controlType: item.controlType,
+      render: (text, record) => (
+        <FormItemData data={item} formdata={record} />
+      ),
+      dataIndex: item.controlCode,
+    }));
+    return columns;
+  }
+  const controls = getColumnsFromContainersByFliter(containers);
+  const columns = getTableColumns(controls);
+  // 这个是显示给用户看的
+  const displayInColumns = getUserSettingColumns(columns);
+
+  // 合并起来
+  // const finnalCols = displayInColumns.concat(customCols);
   // console.log(data);
-  const {pagination} = data;
   // 设置表格宽度
+
+  useEffect(() => {
+    if (tableConfig.containers) {
+      dispatch({
+        type: 'table/containers',
+        payload: tableConfig.containers,
+      });
+    }
+  }, [tableConfig])
+
   return (
-    // <List
-    //   dataSource={data.list || []}
-    //   renderItem={item => (
-    //     <List.Item key={item.id} onClick={() => props.showDetail(item)}>
-    //       <List.Item.Meta
-    //         avatar={
-    //           <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-    //         }
-    //         title={item.name}
-    //         description={item.name}
-    //       />
-    //       <div>{item.name}</div>
-    //     </List.Item>
-    //   )}></List>
-    <View>
-      <Text>Home Screen</Text>
-    </View>
+    <List
+      renderItem={(data) => (
+        <List.Item>
+          <ListItem data={data} columns={displayInColumns} onItemClick={() => showDetail(data)}>
+            {approvable && <ApproveStatusButton
+              status={data.approveStatus}
+            />}
+          </ListItem>
+        </List.Item>
+      )}
+      data={data}
+      loadMore={(params) => {
+        onPageChanged(params)
+      }}
+    />
   );
 }
 
-export default connect(({table}) => ({
-  table,
+export default connect(({ loading }) => ({
+  dataLoading: loading.effects['jgTableModel/listRemote'] || false,
 }))(Index);
