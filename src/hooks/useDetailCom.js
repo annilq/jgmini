@@ -1,18 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useNativeEffect } from 'remax';
 import CommonDetail from '@/components/CustomForm/detail/combine';
 import DetailActions from '@/components/LayerHeader/detailActions';
 import IndexItemCell from '@/components/TableItem/IndexItem';
 
 export function useDetailCom(componentPath) {
   const [component, setComponent] = useState({ component: null });
-  useEffect(
+  useNativeEffect(
     () => {
       function getComponent() {
         // https://github.com/webpack/webpack/issues/6680
         // referance:https://reactjs.org/docs/code-splitting.html
         // https://webpack.js.org/api/module-methods#magic-comments
         if (componentPath) {
-          import(`../pages/${componentPath}/Detail/index.js`)
+          import(`@/pages/${componentPath}/Detail/index.js`)
             .then(({ default: Detail }) => {
               setComponent({ component: Detail });
             })
@@ -34,14 +35,14 @@ export function useDetailCom(componentPath) {
 
 export function useHeaderBar(componentPath) {
   const [headerBar, setComponent] = useState({ headerBar: DetailActions });
-  useEffect(
+  useNativeEffect(
     () => {
       function getComponent() {
         // https://github.com/webpack/webpack/issues/6680
         // referance:https://reactjs.org/docs/code-splitting.html
         // https://webpack.js.org/api/module-methods#magic-comments
         if (componentPath) {
-          import(`../pages/${componentPath}/HeaderBar/index.tsx`)
+          import(`@/pages/${componentPath}/HeaderBar/index.tsx`)
             .then(({ default: HeaderBar }) => {
               setComponent({ headerBar: HeaderBar });
             })
@@ -62,14 +63,14 @@ export function useHeaderBar(componentPath) {
 
 export function useEditCom(componentPath) {
   const [component, setComponent] = useState({ component: null });
-  useEffect(
+  useNativeEffect(
     () => {
       function getComponent() {
         // https://github.com/webpack/webpack/issues/6680
         // referance:https://reactjs.org/docs/code-splitting.html
         // https://webpack.js.org/api/module-methods#magic-comments
         if (componentPath) {
-          import(`../pages/${componentPath}/Edit/index.js`)
+          import(`@/pages/${componentPath}/Edit/index.js`)
             .then(({ default: Edit }) => {
               setComponent({ component: Edit });
             })
@@ -89,11 +90,11 @@ export function useEditCom(componentPath) {
 // 获取自定义的List追加到表格后面
 export function useListCol(componentPath) {
   const [headerBar, setComponent] = useState({ ListCol: [] });
-  useEffect(
+  useNativeEffect(
     () => {
       function getComponent() {
         if (componentPath) {
-          import(`../pages/${componentPath}/List/index.tsx`)
+          import(`@/pages/${componentPath}/List/index.tsx`)
             .then(({ default: cols }) => {
               setComponent({ ListCol: cols });
             })
@@ -113,11 +114,11 @@ export function useListCol(componentPath) {
 // 移动端列表项目render
 export function useListItem(componentPath) {
   const [ListItem, setComponent] = useState({ ListItem: IndexItemCell });
-  useEffect(
+  useNativeEffect(
     () => {
       function getComponent() {
         if (componentPath) {
-          import(`../pages/${componentPath}/ListItem/index.tsx`)
+          import(`@/pages/${componentPath}/ListItem/index.tsx`)
             .then(({ default: cols }) => {
               setComponent({ ListItem: cols });
             })

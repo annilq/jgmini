@@ -1,4 +1,4 @@
-export default [
+const routeMaps = [
   {
     path: '/project/index',
     componentPath: 'Project',
@@ -351,3 +351,8 @@ export default [
     componentPath: 'MaterialReport',
   },
 ]
+function getConfigFormformCode(formCode) {
+  return routeMaps.find(item => item.formCode === formCode) || {}
+}
+
+export default getConfigFormformCode

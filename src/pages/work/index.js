@@ -55,7 +55,7 @@ const Index = () => {
       >
         {tabs.map(tab => (
           <TabContent key={tab.key} tab={tab.title}>
-            <FlowList type={tab.key} />
+            <FlowList type={tab.key} active={tab.key === stateKey} />
           </TabContent>
         ))}
       </Tabs>
@@ -65,6 +65,7 @@ const Index = () => {
 const FlowList = (props) => {
   const {
     type,
+    active
   } = props;
   let url = ""
 
@@ -94,7 +95,11 @@ const FlowList = (props) => {
     })
   };
   usePageEvent('onPullDownRefresh', () => {
-    console.log('onPullDownRefresh');
+    if (active) {
+      console.log(type, 'onPullDownRefresh');
+      setParams({ timer: Date.now() })
+      return Promise.resolve()
+    }
   })
   return (
     <List
@@ -108,8 +113,9 @@ const FlowList = (props) => {
       loading={status === "fetching"}
       data={data}
       loadMore={(params) => {
-        console.log(params);
-        setParams(params)
+        if (active) {
+          setParams({ ...params, pageRemote: true })
+        }
       }}
     />
   );
