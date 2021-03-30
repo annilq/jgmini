@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'remax/wechat';
+import { View, Text } from 'remax/wechat';
 import styles from './index.less';
 
 interface IProps {
@@ -29,7 +29,8 @@ function TableItemCell(props: IProps) {
               <View>{column.title}:</View>
               <View>{column.render
                 ? column.render(data[column.dataIndex], data, index)
-                : (data[column.dataIndex] || "无数据")}</View>
+                : (data[column.dataIndex] || "无数据")}
+              </View>
             </View>
           ))}
         </View>

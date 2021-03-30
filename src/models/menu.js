@@ -2,7 +2,7 @@ import memoizeOne from 'memoize-one';
 import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
 
-// import { findMenuList } from '@/services/system/user';
+import { findMenuList } from '@/services/system/user';
 
 /**
  * 获取面包屑映射
@@ -27,16 +27,6 @@ const getBreadcrumbNameMap = menuData => {
   return routerMap;
 };
 
-// 过滤菜单数据(公司/项目)
-const filterMenuData = data => {
-  const appType = wx.getStorageSync('app-code');
-  return data.filter(item => {
-    const codeArr = item.code.split(',');
-    return !!codeArr.find(code => code === appType);
-  });
-};
-
-const memoizeOneGetBreadcrumbNameMap = memoizeOne(getBreadcrumbNameMap, isEqual);
 
 // 获取当前的的router配置项，里面包含service，formcode
 export const getCurRouterConfigByParams = (params, routerData = []) => {
@@ -67,7 +57,7 @@ export const getStateData = stateKey => {
 export const getRouterConfig = (params) => {
   const routerData = getStateData('menu.routerData');
   const curRouter = getCurRouterConfigByParams(params, routerData)[0];
-  return {...curRouter};
+  return { ...curRouter };
 };
 
 export default {
@@ -81,21 +71,17 @@ export default {
   },
 
   effects: {
-    *getMenuData({ payload }, { put, call }) {
-      const { routes } = payload;
-      yield put({
-        type: 'save',
-        payload: { routerData: routes },
-      });
-      const response = yield call();
+    *getMenuData({ callback }, { put, call }) {
+      const response = yield call(findMenuList);
       if (response) {
-        let { resp } = response;
-        resp = filterMenuData(resp);
-        const breadcrumbNameMap = memoizeOneGetBreadcrumbNameMap(resp);
+        const { data } = response;
         yield put({
           type: 'save',
-          payload: { menuData: resp, breadcrumbNameMap },
+          payload: { menuData: data },
         });
+        if(callback){
+          callback(data)
+        }
       }
     },
   },

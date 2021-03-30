@@ -1,5 +1,5 @@
 import getServiceFromFormCode from '@/components/CustomForm/FormCodeService';
-import request from '@/utils/request';
+import { isProjectMode } from "@/utils/utils"
 
 export function flatdata(data) {
   const { exts, ...rest } = data || {};
@@ -23,33 +23,28 @@ export default {
     params: {},
     data: {
       list: [],
-      pagination: {},
+      currentPage: 1,
+      totalPage: 0
     },
     item: {},
     editVisible: false,
     detailVisible: false,
-
-    currentStep: 0,
-    dataId: '', // 新增后的数据Id，用于明细信息提交数据
+    dataId: ""
   },
 
   reducers: {
-    // 分步
-    currentStep(state, { payload }) {
-      return { ...state, currentStep: payload };
-    },
-
-    // 数据ID
-    dataId(state, { payload }) {
-      return { ...state, dataId: payload };
-    },
-
     // 列表数据
     list(state, { payload }) {
       return {
         ...state,
-        data: { list: payload.list, pagination: payload.pagination },
-        params: payload.params,
+        data: payload,
+      };
+    },
+    // 参数
+    params(state, { payload }) {
+      return {
+        ...state,
+        params: payload,
       };
     },
 
@@ -67,66 +62,64 @@ export default {
     toggleEdit(state, { payload }) {
       return { ...state, editVisible: payload, item: payload ? {} : state.item }; // 避免关闭体验不佳
     },
+
+    dataId(state, { payload }) {
+      return { ...state, dataId: payload };
+    },
   },
 
   effects: {
     // 列表
-    *listRemote({ payload }, { call, select, put }) {
-      const curRouter = yield select(({ menu }) => menu.curRouter);
-      const project = yield select(({ project }) => project.project);
-      // console.log(curRouter);
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      // console.log(serviceObject);
-      // if (!serviceObject) {
-      //   return;
-      // }
-      const response = yield call(list, {
-        ...payload,
-        ...(curRouter.params || {}),
-        ...((project.id && { projectId: project.id }) || {}),
-      });
-      if (response) {
-        const { resp } = response;
-        const list = resp.list.map(flatdata);
-        yield put({
-          type: 'list',
-          payload: {
-            list: list,
-            pagination: {
-              current: resp.currentPage,
-              pageSize: resp.pageSize,
-              total: resp.totalSize,
-            },
-            params: payload,
-          },
+    listRemote: [
+      function* ({ payload = {}, formCode }, { call, select, put }) {
+        const data = yield select(({ jgTableModel }) => jgTableModel.data);
+        // const curRouter = yield select(({ menu }) => menu.curRouter);
+        // const project = yield select(({ project }) => project.project);
+        // console.log(curRouter);
+        console.log(formCode);
+
+        const serviceObject = getServiceFromFormCode(formCode);
+        // console.log(serviceObject);
+        if (!serviceObject) {
+          return;
+        }
+        const { pageRemote, ...params } = payload
+        const response = yield call(serviceObject.list, {
+          ...params,
+          // ...(curRouter.params || {}),
         });
-      }
-    },
+        if (response) {
+          const { resp } = response;
+          const list = resp.list.map(flatdata);
+          yield put({
+            type: 'list',
+            payload: {
+              ...resp,
+              list: pageRemote ? data.list.concat(list) : list,
+            },
+          });
+          yield put({
+            type: 'params',
+            payload: params,
+          });
+        }
+      },
+      { type: 'throttle', ms: 100 },
+    ],
 
     // 列表中新增
     *addRemote({ payload, callback }, { call, put, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       const project = yield select(({ project }) => project.project);
       // console.log(curRouter);
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      const response = yield call(add, {
+      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const response = yield call(serviceObject.add, {
         ...payload,
         ...(curRouter.params || {}),
-        ...((project.id && { projectId: project.id, projectName: project.name }) || {}),
+        ...(isProjectMode() && { projectId: project.id, projectName: project.name }),
       });
       if (response) {
         yield put({ type: 'dataId', payload: response.resp });
-        if (callback) callback(response);
-      }
-    },
-
-    // 新增
-    *addNewItem({ payload, callback }, { call, select }) {
-      const curRouter = yield select(({ menu }) => menu.curRouter);
-      // console.log(curRouter);
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      const response = yield call(add, payload);
-      if (response) {
         if (callback) callback(response);
       }
     },
@@ -136,10 +129,13 @@ export default {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       const project = yield select(({ project }) => project.project);
       // console.log(curRouter);
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      const response = yield call(update, {
+      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const response = yield call(serviceObject.update, {
         ...payload,
-        projectId: project.id,
+        ...(isProjectMode() && {
+          projectId: project.id,
+          projectName: project.name
+        }),
         ...(curRouter.params || {}),
       });
       if (response) {
@@ -151,39 +147,28 @@ export default {
     *removeRemote({ payload, callback }, { call, put, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       // console.log(curRouter);
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      const response = yield call(remove, { id: payload });
+      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const response = yield call(serviceObject.remove, { id: payload });
       if (response) {
-        const params = yield select(({ jgTableModel }) => jgTableModel.params);
-        yield put({ type: 'listRemote', payload: params });
-
         if (callback) callback();
       }
     },
 
     // 分页
-    *pageRemote({ payload }, { put, select }) {
+    *pageRemote({ payload, formCode }, { put, select }) {
       const params = yield select(({ jgTableModel }) => jgTableModel.params);
-      yield put({ type: 'listRemote', payload: { ...params, ...payload } });
+      yield put({ type: 'listRemote', payload: { ...params, ...payload, pageRemote: true }, formCode });
     },
 
-    *queryRemote({ formCode, payload = {}, callback }, { put, select, call }) {
-      const curRouter = yield select(({ menu }) => menu.curRouter);
+    *queryRemote({ payload, callback, formCode }, { put, select, call }) {
       const serviceObject = getServiceFromFormCode(formCode);
       if (!serviceObject) {
         console.log('no service');
         return;
       }
-      if (!serviceObject.query) {
-        yield put({ type: 'dataId', payload: payload });
-        // 执行回调，方便展开
-        if (callback) callback();
-        console.log('no query service');
-        // 自己实现
-        return;
-      }
+      yield put({ type: 'dataId', payload });
       // 根据id在基础表查基础数据，在子表查询拓展数据
-      const baseResp = yield call(serviceObject.query, payload);
+      const baseResp = yield call(serviceObject.query, (typeof payload === "object") ? payload : { id: payload });
       if (baseResp) {
         const { resp } = baseResp;
         if (resp) {
@@ -198,19 +183,63 @@ export default {
       }
     },
 
+    *exportRemote({ callback }, { select, call }) {
+      const curRouter = yield select(({ menu }) => menu.curRouter);
+      const params = yield select(({ jgTableModel }) => jgTableModel.params);
+      // console.log(curRouter);
+      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      // 根据id在基础表查基础数据，在子表查询拓展数据
+      const baseResp = yield call(
+        serviceObject.exportList,
+        params
+      );
+      if (baseResp) {
+        callback(baseResp)
+      }
+    },
+
     // 提交审批
     *approve({ payload, callback }, { call, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       // console.log(curRouter);
       const project = yield select(({ project }) => project.project);
-
-      // const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      if (!approve) {
+      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      if (!serviceObject.approve) {
         console.warn('no approve function');
       }
-      const response = yield call(approve, { ...payload, projectId: project.id });
+      const response = yield call(serviceObject.approve, {
+        ...payload,
+        ...(isProjectMode() && {
+          projectId: project.id,
+          projectName: project.name
+        }),
+        ...(curRouter.params || {})
+      });
       if (response) {
         if (callback) callback();
+      }
+    },
+
+    // 预警
+    *checkExceed({ payload, callback }, { call, select }) {
+      const curRouter = yield select(({ menu }) => menu.curRouter);
+      // console.log(curRouter);
+      const project = yield select(({ project }) => project.project);
+
+      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      if (!serviceObject.checkExceed) {
+        console.warn('no approve function');
+      }
+      const response = yield call(serviceObject.checkExceed, {
+        ...payload,
+        ...(isProjectMode() && {
+          projectId: project.id,
+          projectName: project.name,
+        }),
+        ...(curRouter.params || {}),
+      });
+      if (response) {
+        if (callback) callback(response.resp);
       }
     },
   },

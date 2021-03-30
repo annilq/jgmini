@@ -131,7 +131,9 @@ export const users = {
   add: `${baseUrl}/api/v1/system/user/save`,
   update: `${baseUrl}/api/v1/system/user/update`,
   remove: `${baseUrl}/api/v1/system/user/delete`,
-  findMenuList: `${baseUrl}/api/v1/system/user/findMenuList`,
+  // 移动端or pc端
+  // findMenuList: `${baseUrl}/api/v1/system/user/findMenuList`,
+  findMenuList: `${baseUrl}/api/v1/system/menuMobile/getMyMenu`,
   findRoleList: `${baseUrl}/api/v1/system/user/findRoleList`,
   all: `${baseUrl}/api/v1/system/user/userList`,
 };
@@ -509,15 +511,19 @@ export const workflowApproval = {
   approve: `${baseUrl}/api/v1/workflowApproval/approve`,
   list: `${baseUrl}/api/v1/workflowApproval/pageList`,
   reject: `${baseUrl}/api/v1/workflowApproval/reject`,
+  revoke: `${baseUrl}/api/v1/workflowApproval/revoke`,
   pass: `${baseUrl}/api/v1/workflowApproval/pass`,
+  forcePass: `${baseUrl}/api/v1/workflowApproval/forcePass`,
   auditList: `${baseUrl}/api/v1/workflowApproval/auditList`,
   viewProcess: `${baseUrl}/api/v1/workflowApproval/viewProcess`,
   myCreated: `${baseUrl}/api/v1/workflowApproval/myCreated`,
   processList: `${baseUrl}/api/v1/workflowApproval/processList`,
   copyToMeList: `${baseUrl}/api/v1/workflowApproval/copyToMeList`,
+  rejectList: `${baseUrl}/api/v1/workflowApproval/rejectList`,
   findProcessList: `${baseUrl}/api/v1/workflowApproval/findProcessList`,
   getCanModifyColumn: `${baseUrl}/api/v1/workflowApproval/getCanModifyColumn`,
   getPrevNodes: `${baseUrl}/api/v1/workflowApproval/getPrevNodes`,
+  urge: `${baseUrl}/api/v1/workflowApproval/urge`,
 };
 
 // =================  附件相关 ===============

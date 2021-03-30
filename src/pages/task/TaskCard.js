@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import DashboardHeader from '@/components/DashboardHeader';
 import { SectionHeader2 } from '@/components/SectionHeader';
 
-import { getRouterConfig } from '@/models/menu';
 
 const { TabPane } = Tabs;
 

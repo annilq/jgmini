@@ -16,9 +16,20 @@ export async function approval(params) {
 export async function reject(params) {
   return request(api.reject, { data: params });
 }
+export async function revoke(params) {
+  return request(api.revoke, { data: params });
+}
 
 export async function pass(params) {
   return request(api.pass, { data: params });
+}
+
+export async function forcePass(params) {
+  return request(api.forcePass, { data: params });
+}
+
+export async function remind(params) {
+  return request(api.urge, { data: params });
 }
 
 export async function auditList(params) {
@@ -40,12 +51,12 @@ export async function processList(params) {
 export async function copyToMeList(params) {
   return request(api.copyToMeList, { data: params });
 }
+export async function rejectList(params) {
+  return request(api.rejectList, { data: params });
+}
 
 export async function findProcessList(params) {
-  return request(api.findProcessList, {
-    params,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded ' },
-  });
+  return request(api.findProcessList, { data: params });
 }
 
 export async function getCanModifyColumn(params) {
@@ -79,6 +90,13 @@ export const finish = {
 };
 export const copytome = {
   list: copyToMeList,
+  query,
+  auditList,
+  viewProcess,
+};
+
+export const rejectservice = {
+  list: rejectList,
   query,
   auditList,
   viewProcess,

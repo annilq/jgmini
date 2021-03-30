@@ -6,7 +6,34 @@
   color: white;
   text-align: center;
 }
+
 .menuItem {
   flex: 1;
   align-self: center;
+}
+
+.menuList {
+  background-color: #fff;
+  font-size: 28px;
+}
+
+.menuTitle {
+  line-height: 80px;
+  padding: 0 20px;
+}
+
+.menuGroup {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content:space-between; */
+}
+
+.menuGroupItem {
+  width: 200px;
+  height: 200px;
+  max-width: 200px;
+  max-height: 200px;
+  margin: 10px;
+  text-align: center;
+  border:1px solid #ddd;
 }

@@ -351,8 +351,9 @@ const routeMaps = [
     componentPath: 'MaterialReport',
   },
 ]
-function getConfigFormformCode(formCode) {
+export function getConfigFormFormCode(formCode) {
   return routeMaps.find(item => item.formCode === formCode) || {}
 }
-
-export default getConfigFormformCode
+export function getConfigFormPath(path) {
+  return routeMaps.find(item => item.path === path) || {}
+}

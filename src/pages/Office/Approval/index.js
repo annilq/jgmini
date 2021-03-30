@@ -4,7 +4,6 @@ import { Card, Input } from 'antd';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { getRouterConfig } from '@/models/menu';
 
 import BreadcrumbView from '@/components/Breadcrumb';
 import StandardTable from '@/components/StandardTable';

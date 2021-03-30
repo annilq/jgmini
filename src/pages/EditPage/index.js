@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getRouterConfig } from '@/models/menu';
 
 import { useEditCom } from '@/hooks/useDetailCom';
 import { Edit as BaseForm } from '@/components/CustomForm';

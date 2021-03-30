@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { View } from 'remax/wechat';
 
 import { Button } from 'annar';
 
@@ -24,6 +25,7 @@ function DetailActions(props) {
   function approve() {
     dispatch({
       type: 'jgTableModel/approve',
+      formCode,
       payload: {
         ...data,
         id,
@@ -34,7 +36,6 @@ function DetailActions(props) {
       },
       callback: () => {
         wx.showToast({
-          duration: 2,
           success() {
             handleClose()
           },
@@ -42,12 +43,13 @@ function DetailActions(props) {
         });
         dispatch({
           type: 'jgTableModel/listRemote',
+          formCode
         });
       },
     });
   }
 
-  function revoke() {
+  function revoke() {    
     dispatch({
       type: 'workflow/revoke',
       payload: {
@@ -55,7 +57,6 @@ function DetailActions(props) {
       },
       callback: () => {
         wx.showToast({
-          duration: 2,
           success() {
             handleClose()
           },
@@ -73,13 +74,12 @@ function DetailActions(props) {
       },
       callback: () => {
         wx.showToast({
-          duration: 2,
           success() {
             handleClose()
           },
           title: '审批成功'
         });
-        dispatch({ type: 'jgTableModel/pageRemote' });
+        dispatch({ type: 'jgTableModel/pageRemote', formCode });
       },
     });
   }
@@ -101,42 +101,37 @@ function DetailActions(props) {
     showApproveBtn = true;
   }
   return (
-    <div className="actionBtns" style={{ boxShadow: "0 0 8px 0 #8c8c8c" }}>
+    <View className="actionBtns" style={{ boxShadow: "0 0 8px 0 #8c8c8c" }}>
       {adminType === 'Y' && (
-        <Button style={{
-          border: 'none',
-        }}
-          onClick={() => forcePass()}>
+        <Button
+          shape="square" block look="warning"
+          onTap={() => forcePass()}>
           强制通过
         </Button>
       )}
       {showApproveBtn && (
-        <Button style={{
-
-          border: 'none',
-        }}
-          onClick={() => approve()}>
+        <Button
+          shape="square"
+          type="primary"
+          onTap={() => approve()}>
           提交审批
         </Button>
       )}
       {canUrge === "Y" && (
-        <Button style={{
-          border: 'none',
-        }}
-          onClick={() => remind()}>
+        <Button
+          shape="square"
+          type="primary"
+          onTap={() => remind()}>
           催办
         </Button>)}
       {canRevoke === 'Y' && (
-        <>
-          |
-          <Button style={{
-            border: 'none',
-          }}
-            onClick={() => revoke()}>
-            撤回
-        </Button></>
+        <Button
+          shape="square" block look="warning"
+          onTap={() => revoke()}>
+          撤回
+        </Button>
       )}
-    </div>
+    </View>
   );
 }
 export default connect()(DetailActions);

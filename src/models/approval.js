@@ -1,29 +1,34 @@
+import getServiceFromFormCode from '@/components/CustomForm/FormCodeService';
 import {
   approval,
   reject,
+  revoke,
   pass,
+  forcePass,
   viewProcess,
   auditList,
   getCanModifyColumn,
-} from '../services/workflow/approval';
-import getServiceFromFormCode from '@/components/CustomForm/FormCodeService';
+  findProcessList,
+  getPrevNodes,
+  remind,
+} from '@/services/workflow/approval';
 
 export default {
   namespace: 'workflow',
-
   state: {
     params: {},
     data: {
       list: [],
-      pagination: {},
     },
     curRouter: {},
     detail: {},
+    flowData: {},
     editVisible: false,
     workFlowData: {},
-    flowData:{},
     auditList: [],
     canModifyColumn: [],
+    processList: [],
+    prevApprovers: [],
   },
 
   reducers: {
@@ -31,7 +36,7 @@ export default {
     list(state, { payload }) {
       return {
         ...state,
-        data: { list: payload.list, pagination: payload.pagination },
+        data: payload,
         params: payload.params,
       };
     },
@@ -63,25 +68,34 @@ export default {
     canModifyColumn(state, { payload }) {
       return { ...state, ...payload };
     },
+
+    // 可以选择的流程
+    processList(state, { payload }) {
+      return { ...state, ...payload };
+    },
+
+    // 驳回到列表
+    prevApprovers(state, { payload }) {
+      return { ...state, ...payload };
+    },
   },
 
   effects: {
     // 列表
-    *listRemote({ payload }, { call, put, select }) {
+    *listRemote({ payload = {} }, { call, put, select }) {
+      const data = yield select(({ workflow }) => workflow.data);
       const curRouter = yield select(({ workflow }) => workflow.curRouter);
       const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
-      const response = yield call(serviceObject.list, { ...payload, pageSize: 10 });
+      const { pageRemote, ...params } = payload
+
+      const response = yield call(serviceObject.list, params);
       if (response) {
         const { resp } = response;
         yield put({
           type: 'list',
           payload: {
-            list: resp.list,
-            pagination: {
-              current: resp.currentPage,
-              pageSize: resp.pageSize,
-              total: resp.totalSize,
-            },
+            ...resp,
+            list: pageRemote ? data.list.concat(resp.list) : resp.list,
             params: payload,
           },
         });
@@ -89,34 +103,56 @@ export default {
     },
 
     // 审批通过
-    *approval({ payload, callback }, { call, put, select }) {
+    *approval({ payload, callback }, { call }) {
       const response = yield call(approval, payload);
       if (response) {
-        yield put({ type: 'jgTableModel/toggleDetail', payload: false });
-        const params = yield select(({ workflow }) => workflow.params);
-        yield put({ type: 'listRemote', payload: params });
+        // const params = yield select(({ workflow }) => workflow.params);
+        // yield put({ type: 'listRemote', payload: params });
         if (callback) callback();
       }
     },
 
     // 审批驳回
-    *reject({ payload, callback }, { call, put, select }) {
+    *reject({ payload, callback }, { call }) {
       const response = yield call(reject, payload);
       if (response) {
-        yield put({ type: 'jgTableModel/toggleDetail', payload: false });
-        const params = yield select(({ workflow }) => workflow.params);
-        yield put({ type: 'listRemote', payload: params });
+        // const params = yield select(({ workflow }) => workflow.params);
+        // yield put({ type: 'listRemote', payload: params });
+        if (callback) callback();
+      }
+    },
+
+    // 审批撤回
+    *revoke({ payload, callback }, { call }) {
+      const response = yield call(revoke, payload);
+      if (response) {
+        // const params = yield select(({ workflow }) => workflow.params);
+        // yield put({ type: 'listRemote', payload: params });
         if (callback) callback();
       }
     },
 
     // 跳过
-    *pass({ payload, callback }, { call, put, select }) {
+    *pass({ payload, callback }, { call }) {
       const response = yield call(pass, payload);
       if (response) {
-        yield put({ type: 'jgTableModel/toggleDetail', payload: false });
-        const params = yield select(({ workflow }) => workflow.params);
-        yield put({ type: 'listRemote', payload: params });
+        // const params = yield select(({ workflow }) => workflow.params);
+        // yield put({ type: 'listRemote', payload: params });
+        if (callback) callback();
+      }
+    },
+    // 强制通过
+    *forcePass({ payload, callback }, { call }) {
+      const response = yield call(forcePass, payload);
+      if (response) {
+        if (callback) callback();
+      }
+    },
+
+    // 催办
+    *remind({ payload, callback }, { call }) {
+      const response = yield call(remind, payload);
+      if (response) {
         if (callback) callback();
       }
     },
@@ -124,7 +160,7 @@ export default {
     // 分页
     *pageRemote({ payload }, { put, select }) {
       const params = yield select(({ workflow }) => workflow.params);
-      yield put({ type: 'listRemote', payload: { ...params, ...payload } });
+      yield put({ type: 'listRemote', payload: { ...params, ...payload, pageRemote: true } });
     },
 
     // 查询流程图进度
@@ -155,6 +191,27 @@ export default {
       if (response) {
         const { resp } = response;
         yield put({ type: 'canModifyColumn', payload: { canModifyColumn: resp } });
+      }
+    },
+
+    // 查询当前流程的审批选项列表
+    *getPrevNodesRemote({ payload = {} }, { put, call }) {
+      const response = yield call(getPrevNodes, payload);
+      if (response) {
+        const { resp } = response;
+        yield put({ type: 'prevApprovers', payload: { prevApprovers: resp } });
+      }
+    },
+    // 查询当前流程的审批选项列表
+    *processListRemote({ payload = {} }, { put, select, call }) {
+      const { id } = yield select(({ project }) => project.project);
+      const response = yield call(findProcessList, {
+        ...payload,
+        ...(id && { projectId: id }),
+      });
+      if (response) {
+        const { resp } = response;
+        yield put({ type: 'processList', payload: { processList: resp } });
       }
     },
   },

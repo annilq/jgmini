@@ -155,7 +155,7 @@ function AuditForm(props) {
   };
 
   return (
-    <View className="aduit-content" style={{ backgroundColor: '#fff', position: "relative", marginTop: "20px" }}>
+    <View className="aduit-content" style={{ backgroundColor: '#fff', marginTop: "20px" }}>
       <SectionHeader
         title="审批"
         style={{ marginLeft: 40, marginBottom: 0, lineHeight: "60px" }}

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { Edit as BaseForm } from '@/components/CustomForm';
-import { getRouterConfig } from '@/models/menu';
 
 @connect(
   null,

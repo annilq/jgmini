@@ -26,15 +26,21 @@ const Login = (props) => {
           loginName: loginName.trim(),
           password
         })
-        wx.switchTab({
-          url: '/pages/index/index',
-        });
         // 获取用户数据
         dispatch({
           type: 'account/userRemote',
         });
         dispatch({
           type: 'global/fetchGlobalConstant',
+        });
+        dispatch({
+          type: 'menu/getMenuData',
+          callback(data) {
+            wx.setStorageSync('menu', data)
+          }
+        });
+        wx.switchTab({
+          url: '/pages/index/index',
         });
       }
     });

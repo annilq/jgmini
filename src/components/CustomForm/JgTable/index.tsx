@@ -60,7 +60,7 @@ function Index(props: IProps) {
   return (
     <List
       renderItem={(data) => (
-        <List.Item>
+        <List.Item style={{ backgroundColor: "#fff", marginTop: "20px", padding: "20px" }}>
           <ListItem data={data} columns={displayInColumns} onItemClick={() => showDetail(data)}>
             {approvable && <ApproveStatusButton
               status={data.approveStatus}
