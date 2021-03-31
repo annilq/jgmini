@@ -3,6 +3,7 @@
 import get from 'lodash/get';
 
 import Service from '@/services';
+import { getConfigFormPath } from '@/components/CustomForm/routerConfig'
 
 const FormCodeServiceMap = {
   Project: 'Project',
@@ -73,12 +74,24 @@ type UserCreate = 'USERCREATE';
 
 type ServiceType = Approval | TaskType | UserCreate;
 
-function getServiceFromFormCode(formCode: FormCodeType, type?: ServiceType) {
-  // type === 'USERCREATE'说明是全自定义
+function getServiceFromFormCode(formCode: FormCodeType) {
   const serviceName = FormCodeServiceMap[formCode];
   return get(Service, serviceName);
 }
 
-export { FormCodeType, ServiceType };
+function getServiceAndFormCodeFromPath(path) {
+  const ifSystemForm = path.indexOf('usercreate') > -1;
+  if (ifSystemForm) {
+    const pathArr = path.split('/');
+    const formCode = pathArr[pathArr.length - 1];
+    return { service: getServiceFromFormCode("USERCREATE"), formCode };
+  } else {
+    const { formCode } = getConfigFormPath(path);
+    return { service: getServiceFromFormCode(formCode), formCode };
+  }
+}
+
+
+export { FormCodeType, ServiceType, getServiceAndFormCodeFromPath };
 
 export default getServiceFromFormCode;

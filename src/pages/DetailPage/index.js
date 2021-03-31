@@ -3,11 +3,9 @@ import { useNativeEffect } from "remax"
 import { connect } from 'react-redux';
 
 // import { useHeaderBar, useEditCom } from '@/hooks/useDetailCom';
-import { getConfigFormPath, getConfigFormFormCode } from '@/components/CustomForm/routerConfig'
 import { useQuery } from 'remax';
 
 // import { Edit as BaseForm } from '@/components/CustomForm';
-import DetailActions from '@/components/LayerHeader/detailActions';
 import Detail from './detail';
 // import EditBtn from './editBtn';
 
@@ -19,14 +17,13 @@ function Main(props) {
     jgTableModel: { item: data },
     dispatch,
   } = props;
-  const { formCode, id } = useQuery();
+  const { path, id, formCode } = useQuery();
   useNativeEffect(() => {
     dispatch({
       type: 'jgTableModel/queryRemote',
       payload: { id },
-      formCode
+      path
     });
-
   }, []);
 
   // formCode与后台服务一样的名字
@@ -51,7 +48,7 @@ function Main(props) {
     <>
       {/* <EditBtn data={data} onToggle={() => toggleEdit(!showEdit)} showEdit={showEdit} /> */}
       {/* {showEdit ? <BaseForm formCode={formCode} ISUSERCREATE={ifSystemForm}>{EditChildCom}</BaseForm> : <Detail item={data} formCode={formCode} detailActions={headerBar} route={route} />} */}
-      <Detail item={data} formCode={formCode} detailActions={DetailActions} />
+      <Detail item={data} formCode={formCode} path={path} />
     </>
   );
 }

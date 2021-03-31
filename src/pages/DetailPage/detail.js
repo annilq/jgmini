@@ -6,11 +6,12 @@ import FlowCommonComponent from '@/components/FlowCommonComponent';
 
 import useFormConfig from '@/hooks/useFormConfig';
 import Detail from '@/components/CustomForm/detail';
+import DetailActions from '@/components/LayerHeader/detailActions';
 
 import styles from '@/components/CustomForm/index.less';
 
 function DetailPage(props) {
-  const { item, formCode, detailActions: DetailActions } = props;
+  const { item, formCode, path } = props;
   const { sysVersionId, versionId, id } = item;
 
   const { tableConfig: config } = useFormConfig(formCode, { sysVersionId, versionId });
@@ -22,7 +23,7 @@ function DetailPage(props) {
       {/* 公共模块 */}
       <FlowCommonComponent id={id} formCode={formCode} data={item} />
       {/* 底部操作栏，包含撤回，催办等逻辑 */}
-      {DetailActions && <DetailActions formCode={formCode} data={item} config={config} />}
+      {DetailActions && <DetailActions formCode={formCode} data={item} config={config} path={path} />}
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import getServiceFromFormCode from '@/components/CustomForm/FormCodeService';
+import { getServiceAndFormCodeFromPath } from '@/components/CustomForm/FormCodeService';
 import { isProjectMode } from "@/utils/utils"
 
 export function flatdata(data) {
@@ -71,14 +71,14 @@ export default {
   effects: {
     // 列表
     listRemote: [
-      function* ({ payload = {}, formCode }, { call, select, put }) {
+      function* ({ payload = {}, path }, { call, select, put }) {
         const data = yield select(({ jgTableModel }) => jgTableModel.data);
         // const curRouter = yield select(({ menu }) => menu.curRouter);
         // const project = yield select(({ project }) => project.project);
         // console.log(curRouter);
-        console.log(formCode);
+        console.log(path);
 
-        const serviceObject = getServiceFromFormCode(formCode);
+        const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
         // console.log(serviceObject);
         if (!serviceObject) {
           return;
@@ -86,6 +86,8 @@ export default {
         const { pageRemote, ...params } = payload
         const response = yield call(serviceObject.list, {
           ...params,
+          // 自定义表单需要formCode,统一添加
+          formCode,
           // ...(curRouter.params || {}),
         });
         if (response) {
@@ -108,15 +110,13 @@ export default {
     ],
 
     // 列表中新增
-    *addRemote({ payload, callback }, { call, put, select }) {
+    *addRemote({ payload, callback, path }, { call, put, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
-      const project = yield select(({ project }) => project.project);
       // console.log(curRouter);
-      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       const response = yield call(serviceObject.add, {
         ...payload,
         ...(curRouter.params || {}),
-        ...(isProjectMode() && { projectId: project.id, projectName: project.name }),
       });
       if (response) {
         yield put({ type: 'dataId', payload: response.resp });
@@ -125,17 +125,12 @@ export default {
     },
 
     // 修改
-    *updateRemote({ payload, callback }, { call, select }) {
+    *updateRemote({ payload, callback, path }, { call, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
-      const project = yield select(({ project }) => project.project);
       // console.log(curRouter);
-      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       const response = yield call(serviceObject.update, {
         ...payload,
-        ...(isProjectMode() && {
-          projectId: project.id,
-          projectName: project.name
-        }),
         ...(curRouter.params || {}),
       });
       if (response) {
@@ -144,10 +139,10 @@ export default {
     },
 
     // 删除
-    *removeRemote({ payload, callback }, { call, put, select }) {
+    *removeRemote({ payload, callback, path }, { call, put, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       // console.log(curRouter);
-      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       const response = yield call(serviceObject.remove, { id: payload });
       if (response) {
         if (callback) callback();
@@ -155,13 +150,13 @@ export default {
     },
 
     // 分页
-    *pageRemote({ payload, formCode }, { put, select }) {
+    *pageRemote({ payload, path }, { put, select }) {
       const params = yield select(({ jgTableModel }) => jgTableModel.params);
-      yield put({ type: 'listRemote', payload: { ...params, ...payload, pageRemote: true }, formCode });
+      yield put({ type: 'listRemote', payload: { ...params, ...payload, pageRemote: true }, path });
     },
 
-    *queryRemote({ payload, callback, formCode }, { put, select, call }) {
-      const serviceObject = getServiceFromFormCode(formCode);
+    *queryRemote({ payload, callback, path }, { put, select, call }) {
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       if (!serviceObject) {
         console.log('no service');
         return;
@@ -183,11 +178,11 @@ export default {
       }
     },
 
-    *exportRemote({ callback }, { select, call }) {
+    *exportRemote({ callback, path }, { select, call }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       const params = yield select(({ jgTableModel }) => jgTableModel.params);
       // console.log(curRouter);
-      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       // 根据id在基础表查基础数据，在子表查询拓展数据
       const baseResp = yield call(
         serviceObject.exportList,
@@ -199,20 +194,15 @@ export default {
     },
 
     // 提交审批
-    *approve({ payload, callback }, { call, select }) {
+    *approve({ payload, callback, path }, { call, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       // console.log(curRouter);
-      const project = yield select(({ project }) => project.project);
-      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       if (!serviceObject.approve) {
         console.warn('no approve function');
       }
       const response = yield call(serviceObject.approve, {
         ...payload,
-        ...(isProjectMode() && {
-          projectId: project.id,
-          projectName: project.name
-        }),
         ...(curRouter.params || {})
       });
       if (response) {
@@ -221,21 +211,15 @@ export default {
     },
 
     // 预警
-    *checkExceed({ payload, callback }, { call, select }) {
+    *checkExceed({ payload, callback, path }, { call, select }) {
       const curRouter = yield select(({ menu }) => menu.curRouter);
       // console.log(curRouter);
-      const project = yield select(({ project }) => project.project);
-
-      const serviceObject = getServiceFromFormCode(curRouter.formCode, curRouter.serviceType);
+      const { service: serviceObject, formCode } = getServiceAndFormCodeFromPath(path);
       if (!serviceObject.checkExceed) {
         console.warn('no approve function');
       }
       const response = yield call(serviceObject.checkExceed, {
         ...payload,
-        ...(isProjectMode() && {
-          projectId: project.id,
-          projectName: project.name,
-        }),
         ...(curRouter.params || {}),
       });
       if (response) {

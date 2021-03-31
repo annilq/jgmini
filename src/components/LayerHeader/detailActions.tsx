@@ -5,7 +5,7 @@ import { View } from 'remax/wechat';
 import { Button } from 'annar';
 
 function DetailActions(props) {
-  const { data, dispatch, formCode, config = { approvable: "", formName: "" } } = props;
+  const { data, dispatch, formCode,path, config = { approvable: "", formName: "" } } = props;
   const {
     id,
     approveProcessId,
@@ -25,7 +25,7 @@ function DetailActions(props) {
   function approve() {
     dispatch({
       type: 'jgTableModel/approve',
-      formCode,
+      path,
       payload: {
         ...data,
         id,

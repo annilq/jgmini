@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-
 import List from '@/components/DataList';
 import FormItemData from '@/components/CustomForm/FormItem/detail';
 
@@ -11,12 +9,13 @@ import { getColumnsFromContainersByFliter } from '@/components/CustomForm/FormUt
 interface IProps {
   formCode: string;
   data: any;
+  loading:boolean;
   tableConfig: JgFormProps.FormConfig;
   [index: string]: any;
 }
 
 function Index(props: IProps) {
-  const { ListItem, onPageChanged, formCode, dataLoading, data, showDetail, dispatch } = props;
+  const { ListItem, onPageChanged, formCode, loading, data, showDetail } = props;
 
   const { tableConfig } = useFormConfig(formCode);
   const { approvable, containers } = tableConfig;
@@ -48,15 +47,6 @@ function Index(props: IProps) {
   // console.log(data);
   // 设置表格宽度
 
-  useEffect(() => {
-    if (tableConfig.containers) {
-      dispatch({
-        type: 'table/containers',
-        payload: tableConfig.containers,
-      });
-    }
-  }, [tableConfig])
-
   return (
     <List
       renderItem={(data) => (
@@ -72,10 +62,9 @@ function Index(props: IProps) {
       loadMore={(params) => {
         onPageChanged(params)
       }}
+      loading={loading}
     />
   );
 }
 
-export default connect(({ loading }) => ({
-  dataLoading: loading.effects['jgTableModel/listRemote'] || false,
-}))(Index);
+export default Index;
