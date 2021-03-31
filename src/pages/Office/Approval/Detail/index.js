@@ -10,30 +10,33 @@ import DetailActions from '@/components/LayerHeader/detailActions';
 
 import styles from '@/components/CustomForm/index.less';
 import Detail from '@/components/CustomForm/detail';
+import { getConfigFormFormCode } from '@/components/CustomForm/routerConfig'
 
 import AuditForm from './AuditForm';
 
-function App({ flowData, dispatch, loading, item }) {
+function App({ flowData, dispatch, item }) {
   const [form] = Form.useForm();
   const { bizId, id, formCode, type, taskDetailId } = flowData;
   const { flag } = item;
   // 如果id不同调用详情接口
+  let newformCode = formCode;
+  // 获取审批服务
+  if (type === 'biz_allinone') {
+    newformCode = 'USERCREATE';
+    // 用户全自定义
+  }
+  const config = getConfigFormFormCode(newformCode);
+  const { path } = config
   useNativeEffect(
     () => {
       if (!bizId) {
         return;
       }
-      let newformCode = formCode;
-      // 获取审批服务
-      if (type === 'biz_allinone') {
-        newformCode = 'USERCREATE';
-        // 用户全自定义
-      }
       // 根据服务获取审批详情
       dispatch({
         type: 'jgTableModel/queryRemote',
         payload: { id: bizId, taskDetailId },
-        formCode: newformCode,
+        path,
         callback: async (data) => {
           // 设置表单信息
           await form.setFieldsValue(data)
@@ -67,13 +70,8 @@ function App({ flowData, dispatch, loading, item }) {
     </View>
   );
 }
-export default connect(({ workflow, jgTableModel, loading }) => ({
+export default connect(({ workflow, jgTableModel }) => ({
   flowData: workflow.flowData,
   item: jgTableModel.item,
-  loading:
-    loading.effects['workflow/approval'] ||
-    loading.effects['workflow/reject'] ||
-    loading.effects['workflow/pass'] ||
-    false,
 }))(App);
 // 调用window.g_app._store.dispatch({ type: 'workflow/flowData', payload: record });
