@@ -56,7 +56,7 @@ class CommentRecord extends React.Component {
             dispatch({ type: 'comment/listRemote', payload: { ...params, entityId: entity.id, moduleCode: formCode } });
           }}
           renderItem={item => (
-            <Cell style={{ display: "flex", padding: "0 20px", marginTop: "20px" }}>
+            <View style={{ display: "flex", padding: "0 20px", marginTop: "20px" }}>
               <Image
                 src={item.avatar || Avatar}
                 style={{
@@ -66,7 +66,7 @@ class CommentRecord extends React.Component {
                 }}
                 alt="头像"
               />
-              <View style={{ padding: "20px" }}>
+              <View style={{ padding: "20px", flex: 1 }}>
                 <View>
                   <Text style={{ fontWeight: 'bold', color: '#333' }}>
                     {item.creatorName}
@@ -83,12 +83,13 @@ class CommentRecord extends React.Component {
                 ) : null}
                 <Text style={{ color: '#999', marginTop: '10px' }}>{item.createTime}</Text>
               </View>
-              <View style={{ display: 'flex', alignItems: 'center', marginLeft: "20px" }}>
-                <Text onClick={() => this.remove(item)}>
-                  删除
-                  </Text>
+              <View
+                style={{ padding: "20px 0",color:"#f00" }}
+                onClick={() => this.remove(item)}
+              >
+                删除
               </View>
-            </Cell>
+            </View>
           )}
         />
       </View>
