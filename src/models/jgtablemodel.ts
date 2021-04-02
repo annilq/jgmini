@@ -161,6 +161,7 @@ export default {
         console.log('no service');
         return;
       }
+      
       yield put({ type: 'dataId', payload });
       // 根据id在基础表查基础数据，在子表查询拓展数据
       const baseResp = yield call(serviceObject.query, (typeof payload === "object") ? payload : { id: payload });

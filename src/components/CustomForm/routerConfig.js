@@ -3,18 +3,21 @@ const routeMaps = [
     path: '/project/index',
     componentPath: 'Project',
     formCode: 'Project',
+    icon: "ic_project_xmlb",
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   // contract
   {
     path: '/contract/inContract',
     formCode: 'Contract',
+    icon: "ic_project_skht",
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   // 材料采购
   {
     path: '/contract/outContract',
     formCode: 'materialContract',
+    icon: "ic_project_fkht",
     componentPath: 'Contract',
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
@@ -22,68 +25,84 @@ const routeMaps = [
   {
     path: '/contract/leaseContract',
     formCode: 'leaseContract',
+    icon: "ic_project_fkht",
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   // 分包
   {
     path: '/contract/laborContract',
     formCode: 'laborContract',
+    icon: "ic_project_fkht",
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   // 其他
   {
     path: '/contract/otherContract',
     formCode: 'otherContract',
+    icon: "ic_project_fkht",
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   // 劳务
   {
     path: '/contract/workerContract',
     formCode: 'workerContract',
+    icon: "ic_project_fkht",
     operations: ['WRITE', 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   // 进项发票
   {
+    path: "/finance/invoice",
+    icon: "ic_project_fp",
+  },
+  {
     path: '/finance/invoice/inputInvoice',
     formCode: 'InputInvoice',
+    icon: "ic_project_jxfp",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 销项发票
   {
     path: '/finance/invoice/saleInvoice',
     formCode: 'SaleInvoice',
+    icon: "ic_project_xxfp",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   {
     path: '/finance/payment',
     formCode: 'PaymentFinance',
+    icon: "ic_project_fkd",
     componentPath: 'Finance/Payment',
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   {
     path: '/finance/receipt',
     formCode: 'ReceiptFinance',
+    icon: "ic_project_skd",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   {
     path: '/finance/settle',
     formCode: 'Settle',
+    icon: "ic_project_jsd",
     componentPath: 'Finance/Settle',
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   {
     path: '/finance/loan',
     formCode: 'LoanBill',
+    icon: "ic_project_jkd",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   {
     path: '/finance/reimburse',
     formCode: 'ReimburseBill',
+    icon: "ic_project_bxd",
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   {
     path: '/finance/purchaseBill',
     formCode: 'PurchasePayable',
+    icon: "ic_project_cgyfd",
     params: { approveStatus: 'COMPLETE' },
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
@@ -95,37 +114,51 @@ const routeMaps = [
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   {
+    path: "/supply/purchase",
+    icon: "ic_project_cg",
+  },
+  {
     path: '/supply/purchase/purchaseApply',
     formCode: 'PurchaseApply',
+    icon: "ic_project_cg",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   {
     path: '/supply/purchase/purchaseEnquiry',
     componentPath: 'Supply/Purchase/purchaseEnquiry',
     formCode: 'PurchaseEnquiry',
+    icon: "ic_project_cgxj",
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   {
     path: '/supply/purchase/purchaseNeed',
     formCode: 'PurchaseNeed',
+    icon: "ic_project_cgxq",
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   {
     path: '/supply/purchase/purchaseContract',
     formCode: 'Contract',
+    icon: "ic_project_cght",
     params: { contractCate: '3' },
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   // 采购入库
   {
+    path: "/supply/stock",
+    icon: "ic_project_kc",
+  },
+  {
     path: '/supply/stock/depotIn',
     formCode: 'PurchaseDepotIn',
+    icon: "ic_project_cgrk",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 归还入库
   {
     path: '/supply/stock/depotIn2',
     formCode: 'ReturnDepotIn',
+    icon: "ic_project_ghrk",
     componentPath: 'Supply/Stock/returnDepotIn',
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
@@ -133,24 +166,28 @@ const routeMaps = [
   {
     path: '/supply/stock/depotOut',
     formCode: 'DepotOut',
+    icon: "ic_project_cgck",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 退货出库
   {
     path: '/supply/stock/depotOut2',
     formCode: 'RefundDepotOut',
+    "name": "depotOut2",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 库存调拨
   {
     path: '/supply/stock/depotTransfer',
     formCode: 'DepotTransfer',
+    icon: "ic_project_kcdb",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 库存盘点
   {
     path: '/supply/stock/depotCheckDetail',
     formCode: 'DepotCheck',
+    icon: "ic_project_ckxq",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 库存详情
@@ -160,14 +197,21 @@ const routeMaps = [
   },
   // 租赁进场
   {
+    path: "/supply/rent",
+    icon: "ic_project_zl"
+  }
+  ,
+  {
     path: '/supply/rent/leaseenter',
     formCode: 'LeaseIn',
+    icon: "ic_project_zljc",
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
   // 租赁退场
   {
     path: '/supply/rent/leaseleave',
     formCode: 'LeaseOut',
+    icon: "ic_project_zltc",
     componentPath: 'Supply/Rent/LeaseLeave',
     operations: ['WRITE', 'EDIT', 'DELETE', 'DOWNLOAD']
   },
@@ -175,6 +219,7 @@ const routeMaps = [
   {
     path: '/supply/rent/leasecheck',
     formCode: 'LeaseInDetail',
+    icon: "ic_project_zlpd",
     componentPath: 'Supply/Rent/LeaseCheck',
     operations: ['DOWNLOAD'],
     showCreator: false,
@@ -182,21 +227,25 @@ const routeMaps = [
   {
     path: '/database/supplier',
     formCode: 'Supplier',
+    icon: "ic_project_zljch",
     operations: ["WRITE", 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   {
     path: '/database/material',
     formCode: 'Material',
+    icon: "ic_project_zljch",
     operations: ["WRITE", 'DOWNLOAD', 'EDIT', 'DELETE'],
   },
   {
     path: '/database/machine',
     formCode: 'Machine',
+    icon: "ic_project_zljch",
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   {
     path: '/database/depot',
     formCode: 'Depot',
+    icon: "ic_project_zljch",
     componentPath: 'Database/Depot',
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
@@ -250,12 +299,18 @@ const routeMaps = [
     path: '/usercreate/:formCode',
     serviceType: 'USERCREATE',
     formCode: 'USERCREATE',
+    icon: "ic_project_zljch",
     operations: ['WRITE', 'EDIT', 'DELETE']
   },
   // 质量检查
   {
+    path: '/quality',
+    icon: "ic_project_zljc",
+  },
+  {
     path: '/quality/qualityCheck',
     formCode: 'QualityCheck',
+    icon: "ic_project_zljc",
     componentPath: 'Check',
     params: { category: 1 },
     operations: ['WRITE', 'EDIT', 'DELETE']
@@ -271,6 +326,7 @@ const routeMaps = [
   {
     path: '/quality/rectification',
     formCode: 'Reform',
+    icon: "ic_project_zlzg",
     operations: ['EDIT', 'DELETE'],
     params: { category: 1 },
     componentPath: 'Reform',
@@ -279,12 +335,18 @@ const routeMaps = [
   {
     path: '/quality/incentive',
     formCode: 'Incentive',
+    icon: "ic_project_zljch",
     operations: ['EDIT', 'DELETE'],
     params: { category: 1 },
   },
   {
+    path: '/safety',
+    icon: "ic_project_aqjc",
+  },
+  {
     path: '/safety/safetyCheck',
     formCode: 'QualityCheck',
+    icon: "ic_project_aqjc",
     componentPath: 'Check',
     params: { category: 2 },
     operations: ['WRITE', 'EDIT', 'DELETE']
@@ -293,6 +355,7 @@ const routeMaps = [
   {
     path: '/safety/checkWaiting',
     formCode: 'QualityCheck',
+    icon: "ic_project_aqjch",
     componentPath: 'CheckWaiting',
     params: { category: 2, status: '0' },
   },
@@ -300,6 +363,7 @@ const routeMaps = [
   {
     path: '/safety/rectification',
     formCode: 'Reform',
+    icon: "ic_project_aqzg",
     params: { category: 2 },
     componentPath: 'Reform',
     operations: ['EDIT', 'DELETE'],
@@ -308,6 +372,7 @@ const routeMaps = [
   {
     path: '/safety/incentive',
     formCode: 'Incentive',
+    icon: "ic_project_aqjch",
     params: { category: 2 },
     operations: ['EDIT', 'DELETE'],
   },
@@ -350,10 +415,36 @@ const routeMaps = [
     operations: ['WRITE'],
     componentPath: 'MaterialReport',
   },
+  // 进度填报
+  {
+    path: '/projectProcess/processReport',
+    component: './ProcessReport',
+  },
+  // 进度计划
+  {
+    path: '/projectProcess/processPlan',
+    component: './ProjectPlan',
+  },
 ]
 export function getConfigFormFormCode(formCode) {
   return routeMaps.find(item => item.formCode === formCode) || {}
 }
+
 export function getConfigFormPath(path) {
   return routeMaps.find(item => item.path === path) || {}
+}
+
+export function getIconConfigFormPath(path) {
+  let url = "ic_project_zdybd"
+  if (path.indexOf("usercreate") > -1) {
+    url = "ic_project_zdybd"
+  } else {
+    const routeConfig = routeMaps.find(item => item.path === path);
+    if (!routeConfig) {
+      console.log(path);
+    } else if (routeConfig.icon) {
+      url = routeConfig.icon
+    }
+  }
+  return url
 }

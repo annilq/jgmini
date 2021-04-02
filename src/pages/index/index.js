@@ -1,33 +1,48 @@
 import React, { useState } from 'react';
 import { usePageEvent } from 'remax/macro';
-import { View, Text } from 'remax/wechat';
-import { Icon } from 'annar';
+import { View } from 'remax/wechat';
+import { Icon, Popup } from 'annar';
 
 import styles from './index.css';
+import FlowItem from './flowItem';
 
 export default () => {
   const [menus, setMenus] = useState([])
+  const [show, setShow] = useState(false);
+  const [subMenu, setSubMenu] = useState({ children: [] });
   usePageEvent('onShow', () => {
     console.log('on show');
-    const menus = wx.getStorageSync('menu')||[];
+    const menus = wx.getStorageSync('menu') || [];
     setMenus(menus)
   });
+
   function goApprove() {
     wx.navigateTo({
       url: '/pages/work/index',
     })
   }
+
   function goTask() {
 
   }
 
-  function addFlow(flow) {
-    console.log(flow);
+  function addFlow() {
+  }
+
+  function goFlowList(flow) {
     wx.navigateTo({
       url: `/pages/flowlist/index?path=${flow.url}`
     })
   }
-  console.log(menus);
+
+  function handleClick(flow) {
+    if (flow.children.length > 0) {
+      setShow(true);
+      setSubMenu(flow)
+    } else {
+      goFlowList(flow)
+    }
+  }
   return (
     <View>
       <View className={styles.header}>
@@ -46,19 +61,25 @@ export default () => {
       </View>
       <View className={styles.menuList}>
         {menus.map((menuItem) => (
-          <>
-            <View className={styles.menuTitle}>
-              <Text> {menuItem.menuName}</Text>
-            </View>
-            <View className={styles.menuGroup}>
-              {menuItem.children.map(item => (
-                <View className={styles.menuGroupItem} key={item.menuCode} onTap={() => addFlow(item)}>
-                  <Text> {item.menuName}</Text>
-                </View>))}
-            </View>
-          </>
+          <FlowItem data={menuItem} handleClick={handleClick} />
         ))}
       </View>
+      <Popup
+        position="bottom"
+        open={show}
+        onClose={() => {
+          setShow(false);
+        }}
+      >
+        <View
+          style={{
+            padding: '24px',
+          }}
+          className={styles.menuList}
+        >
+          <FlowItem data={subMenu} handleClick={handleClick} />
+        </View>
+      </Popup>
     </View>
   );
 };

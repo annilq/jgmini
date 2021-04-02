@@ -9,17 +9,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
-    "build": "cross-env NODE_ENV=production remax build -t wechat"
+    "build": "cross-env NODE_ENV=production remax build -t wechat -a -m"
   },
   "dependencies": {
-    "@remax/plugin-less": "^1.0.0",
     "annar": "^2.0.9",
     "crypto-js": "^4.0.0",
     "dva-core": "^2.0.4",
     "dva-loading": "^3.0.22",
     "lodash": "^4.17.21",
-    "moment": "^2.29.1",
-    "rc-field-form": "^1.20.0",
     "react": "^16.14.0",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
@@ -27,6 +24,7 @@
     "wolfy87-eventemitter": "^5.2.9"
   },
   "devDependencies": {
+    "@remax/plugin-less": "^1.0.0",
     "cross-env": "^7.0.2",
     "@types/react": "^16.14.2",
     "typescript": "^4.1.2"

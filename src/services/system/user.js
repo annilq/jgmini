@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request,{requestMoile} from '@/utils/request';
 import {users as api} from '@/services/api';
 
 export async function list(params) {
@@ -26,7 +26,7 @@ export async function all(params) {
 }
 
 export async function findMenuList(params) {
-  return request(api.findMenuList, {data: params});
+  return requestMoile(api.findMenuList, {data: params});
 }
 
 export async function findRoleList(params) {

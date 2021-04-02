@@ -72,7 +72,8 @@ function Main(props) {
   })
   useNativeEffect(() => {
     reset()
-  }, [])
+  }, []);
+  // console.log(data);
   return (
     <View>
       {/* <View className={styles.tableListForm}>

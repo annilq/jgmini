@@ -36,11 +36,11 @@ const Login = (props) => {
         dispatch({
           type: 'menu/getMenuData',
           callback(data) {
-            wx.setStorageSync('menu', data)
+            wx.setStorageSync('menu', data);
+            wx.navigateTo({
+              url: '/pages/index/index',
+            });
           }
-        });
-        wx.switchTab({
-          url: '/pages/index/index',
         });
       }
     });
