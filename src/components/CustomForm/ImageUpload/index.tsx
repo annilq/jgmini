@@ -1,6 +1,7 @@
 import React from 'react';
 import ImagePreview from '@/components/CustomForm/ImagePreview';
 import Services from '@/services';
+import { file as api } from '@/services/api';
 
 function transformData(item) {
   return {
@@ -16,23 +17,31 @@ class FileUpload extends React.PureComponent<JgFormProps.IFormProps> {
   onPickPhoto = () => {
     const { value, onChange } = this.props
     wx.chooseImage({
-      count: 1,
+      count: 8,
       success(res) {
         const tempFilePaths = res.tempFilePaths
         wx.uploadFile({
-          url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+          url: api.uploadPicture, //仅为示例，非真实的接口地址
           filePath: tempFilePaths[0],
-          name: 'file',
-          formData: {
-            'user': 'test'
+          header: {
+            authorization: wx.getStorageSync('token'),
           },
+          name: 'multipartFile',
           success(res) {
-            const data = res.data
-            if (data) {
-              const files = JSON.parse(data)
-              const filedata = files.map(transformData)
+            const data = res.data;
+            console.log(data);
+            const response = JSON.parse(data);
+            const { resp: files, code } = response;
+            if (files && code === 0) {
+              let filedata = []
+              if (Array.isArray(files)) {
+                filedata = files.map(transformData)
+              } else {
+                filedata = [files].map(transformData)
+              }
               const propsValues = value && JSON.parse(value) || []
               propsValues.push(...filedata)
+              console.log(propsValues);
               onChange(JSON.stringify(propsValues))
             }
           }
@@ -51,7 +60,7 @@ class FileUpload extends React.PureComponent<JgFormProps.IFormProps> {
   }
 
   render() {
-    const { value, label } = this.props
+    const { value, label } = this.props;
     return (
       <ImagePreview files={value} onDelete={this.onDelete} label={label} onPickPhoto={this.onPickPhoto} />
     );

@@ -43,7 +43,6 @@ function Main(props) {
   //     </>
   //   );
   // }
-  console.log(data);
   return (
     <>
       {/* <EditBtn data={data} onToggle={() => toggleEdit(!showEdit)} showEdit={showEdit} /> */}
