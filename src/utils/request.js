@@ -35,6 +35,7 @@ function request(url, data = {}, method = "POST") {
         return data;
     }).catch(error => {
         wx.showToast({
+            icon: "none",
             title: error,
         });
     })
@@ -75,6 +76,7 @@ export function requestMoile(url, data = {}, method = "POST") {
         return data;
     }).catch(error => {
         wx.showToast({
+            icon: "none",
             title: error,
         });
     })

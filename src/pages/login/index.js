@@ -3,8 +3,7 @@ import { Form, Cell, Button, Card } from 'annar';
 import { usePageEvent } from 'remax/macro';
 
 import { connect } from "react-redux"
-import MD5 from 'crypto-js/md5';
-
+import MD5 from 'blueimp-md5';
 const Login = (props) => {
 
   const { dispatch } = props
