@@ -16,10 +16,10 @@ import { ConTypes } from '@/components/CustomForm/controlTypes';
 import TreePicker from '@/components/CustomForm/TreePicker';
 import ImagePreview from '@/components/CustomForm/ImagePreview';
 import DataSelecter from '@/components/CustomForm/DataSelecter';
-import TagList from '@/components/CustomForm/TaskTag/taglist';
+// import TagList from '@/components/CustomForm/TaskTag/taglist';
 import TableList from '@/components/CustomForm/SubTable/detailList';
-import Address from '@/components/CustomForm/Address/detail';
-import RelationData from '@/components/CustomForm/RelationData/detail';
+// import Address from '@/components/CustomForm/Address/detail';
+// import RelationData from '@/components/CustomForm/RelationData/detail';
 // import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
 // import DetailModal from '@/components/CustomForm/DetailModal/detail';
 const NODATA_TEXT = "-"

@@ -1,8 +1,8 @@
 module.exports = {
   pages: [
+    'pages/login/index',
     'pages/index/index',
     'pages/work/index',
-    'pages/login/index',
     'pages/user/index',
     'pages/task/index',
     'pages/approvepage/index',

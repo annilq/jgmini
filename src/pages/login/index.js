@@ -50,7 +50,6 @@ const Login = (props) => {
     console.log(user);
     form.setFieldsValue(user)
   })
-
   return (
     <Card contentStyle={{ padding: '20px 0 20px' }}>
       <Form
