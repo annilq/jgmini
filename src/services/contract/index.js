@@ -1,27 +1,9 @@
-import request from '@/utils/request';
-import { contract as api } from '@/services/api';
+import * as InContract from './inContract';
+import * as OutContract from './outContract';
+import * as MaterialContract from './materialContract';
+import * as LeaseContract from './leaseContract';
+import * as LaborContract from './laborContract';
+import * as WorkerContract from './workContract';
+import * as OtherContract from './otherContract';
 
-// common api
-export async function list(params) {
-  return request(api.list, { data: params});
-}
-
-export async function add(params) {
-  return request(api.add, { data: params});
-}
-
-export async function remove(params) {
-  return request(api.remove, { data: params });
-}
-export async function query(params) {
-  return request(api.query, { data: params });
-}
-
-export async function update(params) {
-  return request(api.update, { data: params });
-}
-
-export async function approve(params) {
-  return request(api.approve, { data: params });
-}
-
+export { InContract, OutContract, LaborContract, LeaseContract, MaterialContract,WorkerContract,OtherContract }
