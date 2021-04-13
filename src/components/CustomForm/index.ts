@@ -36,7 +36,7 @@ export {
   ImageUpload,
   // InvoiceUpload,
   // JgCustomPage,
-  // JgDatePicker,
+  JgDatePicker,
   // JgRangePicker,
   JgNumber,
   // JgSearchForm,

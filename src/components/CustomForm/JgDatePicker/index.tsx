@@ -1,59 +1,45 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
-import { DatePicker } from 'antd';
+import React from 'react';
+import { DatePicker, Cell } from 'annar';
 
 interface DateProps extends JgFormProps.IFormProps {
   extraProps?: { formatId: number };
 }
 
-class JgDatePicker extends PureComponent<DateProps> {
-  onChange = value => {
-    const { onChange } = this.props;
-    const format = this.getDateFormat();
-    let date = null;
-    if (value) {
-      date = moment(value).format(format);
-    }
-    onChange && onChange(date);
-  };
+function JgDatePicker(props: DateProps) {
 
+  const { extraProps, value, onChange, placeholder } = props;
+  const formatId = extraProps && extraProps.formatId;
   // format
   // 0 :YYYY-MM-DD'
   // 1 :YYYY-MM-DD HH:mm:ss'
-  getDateFormat = () => {
-    const { extraProps } = this.props;
-    const formatId = extraProps && extraProps.formatId;
+  const getDateFormat = () => {
     let dateFormat;
     switch (formatId) {
       case 0:
-        dateFormat = 'YYYY-MM-DD';
+        dateFormat = 'date';
         break;
       case 1:
-        dateFormat = 'YYYY-MM-DD HH:mm:ss';
+        dateFormat = 'datetime';
         break;
       default:
-        dateFormat = 'YYYY-MM-DD';
+        dateFormat = 'date';
         break;
     }
     return dateFormat;
   };
-
-  render() {
-    const { className, value, ...rest } = this.props;
-    if (!value) {
-      this.onChange(moment());
-    }
-    return (
-      <DatePicker
-        className={className}
-        value={value ? moment(value) : null}
-        format={this.getDateFormat()}
-        {...rest}
-        // 放到最后面避免被rest覆盖
-        onChange={this.onChange}
-      />
-    );
-  }
+  return (
+    <DatePicker
+      value={value}
+      type={getDateFormat()}
+      // 放到最后面避免被rest覆盖
+      onChange={onChange}
+    >
+      <Cell arrow border={false} valueAlign="left">
+        {value}
+      </Cell>
+    </DatePicker>
+  );
 }
+
 
 export default JgDatePicker;

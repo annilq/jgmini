@@ -15,7 +15,7 @@ import {
   // ImageUpload,
   // Address,
   // InvoiceUpload,
-  // JgDatePicker,
+  JgDatePicker,
   JgNumber,
   Picker,
   // SubTable,
@@ -249,15 +249,12 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         );
         break;
       case ConTypes.DATEPICKER:
-        // com = (
-        //   <JgDatePicker
-        //     className={styles.widgetContent}
-        //     extraProps={{ formatId: extraProps.number }}
-        //     {...formProps}
-        //   />
-        // );
-        com = <Text>JgDatePicker</Text>
-
+        com = (
+          <JgDatePicker
+            extraProps={{ formatId: extraProps.number }}
+            {...formProps}
+          />
+        );
         break;
       case ConTypes.DATERANGE:
         // com = <RangePicker className={styles.widgetContent} {...formProps} />;

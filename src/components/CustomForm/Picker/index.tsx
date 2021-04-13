@@ -10,17 +10,11 @@ interface Iprops {
 }
 
 function Picker(props: Iprops) {
-  const { data, value, onChange = () => { }, placeholder, ...rest } = props;
-  let defaultValue;
-  if (typeof value === "string" && value) {
-    defaultValue = value.split(',');
-  } else if (typeof value === "number") {
-    // 数据字典都是字符串类型
-    defaultValue = [`${value}`]
-  } else {
-    defaultValue = []
+  const { data, value, onChange = () => { }, placeholder } = props;
+  const handleChange = (index) => {
+    onChange(data[index].value)
   }
-  console.log(data);
+  const valueIndex = data.findIndex(item => item.value === value)
   return (
     <Cell.Picker
       label={placeholder}
@@ -28,9 +22,9 @@ function Picker(props: Iprops) {
       arrow
       range={data}
       rangeKey="label"
-      value={defaultValue}
+      value={valueIndex}
       border={false}
-      onChange={(v: any) => onChange(v)}
+      onChange={(v: any) => { handleChange(v) }}
     />
   );
 }

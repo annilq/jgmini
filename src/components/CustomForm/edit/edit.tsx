@@ -77,6 +77,7 @@ class BaseForm extends PureComponent<IProps> {
         {isEditAble ? (controlType === ConTypes.FILEUPLOADER ? (
           <FormItem
             name={controlCode}
+            valueAlign="left"
             border={false}
             data-id={controlId}
             label={(
@@ -91,6 +92,7 @@ class BaseForm extends PureComponent<IProps> {
             <FormItem
               name={controlCode}
               border={false}
+              valueAlign="left"
               rules={rules}
               label={noStyle ? "" : (
                 <Text>
@@ -113,6 +115,7 @@ class BaseForm extends PureComponent<IProps> {
               <FormItem
                 name={controlCode}
                 border={false}
+                valueAlign="left"
                 data-id={controlId}
                 label={noStyle ? "" : (
                   <Text>
@@ -128,6 +131,7 @@ class BaseForm extends PureComponent<IProps> {
         {nameCode ? (
           <FormItem
             name={nameCode}
+            valueAlign="left"
             data-id={controlId}
             label={controlLabel}
             style={{ display: 'none' }}
