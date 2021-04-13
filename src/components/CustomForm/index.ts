@@ -1,32 +1,33 @@
 /* eslint-disable import/no-unresolved */
-// import Address from './Address';
-// import DataPicker from './DataPicker';
+import Address from './Address';
+import DataPicker from './DataPicker';
 import DataSelecter from './DataSelecter';
 // import Detail from './detail';
-// import Edit from './edit';
+import Edit from './edit';
 import FilePreview from './FilePreview';
-// // import FileUpload from './FileUpload';
+// import FileUpload from './FileUpload';
 // import FormItem from './FormItem';
 import ImagePreview from './ImagePreview';
 import ImageUpload from './ImageUpload';
-// import InvoiceUpload from './InvoiceUpload';
+import InvoiceUpload from './InvoiceUpload';
 // // import JgCustomPage from './JgCustomPage';
-// // import JgDatePicker from './JgDatePicker';
+import JgDatePicker from './JgDatePicker';
 // import JgRangePicker from './JgDatePicker/rangepicker';
-// import JgNumber from './JgNumber';
+import JgNumber from './JgNumber';
 // import JgSearchForm from './JgSearchForm';
 // // import JgTable from './JgTable';
 // // import JgTableSetting from './JgTableSetting';
 import TreePicker from './TreePicker';
 import SubTable from './SubTable';
-// // import RelationData from './RelationData';
+// import RelationData from './RelationData';
 import TaskTag from './TaskTag';
+import Picker from './Picker';
 
 export {
   // Address,
   // DataPicker,
   DataSelecter,
-  // Edit,
+  Edit,
   // Detail,
   FilePreview,
   // FileUpload,
@@ -37,12 +38,13 @@ export {
   // JgCustomPage,
   // JgDatePicker,
   // JgRangePicker,
-  // JgNumber,
+  JgNumber,
   // JgSearchForm,
   // JgTable,
   // JgTableSetting,
   TreePicker,
   SubTable,
   // RelationData,
-  TaskTag
+  TaskTag,
+  Picker
 };

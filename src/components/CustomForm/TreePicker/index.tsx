@@ -5,13 +5,13 @@ import memoizeOne from 'memoize-one';
 
 import { Selector, SelectorPopup, Cell } from 'annar';
 import { baseUrl } from '@/services/api';
-import { View, Text } from 'remax/wechat';
+import { View, Text, Picker } from 'remax/wechat';
 import { useNativeEffect } from 'remax';
 
 function TreePicker(props) {
   const {
     dispatch,
-    value,
+    value = [],
     onChange,
     placeholder,
     BackEndData,
@@ -66,22 +66,34 @@ function TreePicker(props) {
   if (disabled || readOnly) {
     return <Text>{name ? name : (value && value.toString() || false)}</Text>;
   }
-
+  // console.log(data);
+  const generatorRangeData = (data) => {
+    const result = [];
+    data.forEach(({ name, id, children }) => {
+      const col = { name, id }
+      result.push(col);
+      // if (children) {
+      //   const subRange = generatorRangeData(children);
+      // }
+    });
+    return result
+  }
+  const range = generatorRangeData(data)
+  const current = range.find(item => item.id === value);
+  // console.log(current, value);
   return (
-    <Cell label="配送方式" arrow>
-      <SelectorPopup
-        options={data}
-        value={value}
-        title={placeholder}
-        placeholder="请选择"
-        {...rest}
-        onChange={(value: any, valueStr: any) => {
-          onChange(value)
-        }}
-      >
-        {name}
-      </SelectorPopup>
-    </Cell>
+    <Picker
+      mode="multiSelector"
+      value={value[0]}
+      range={[range]}
+      rangeKey="name"
+      onColumnChange={() => { }}
+      onChange={(e) => { const index = e.detail.value[0]; onChange(range[index].id) }}
+    >
+      <view>
+        {current && current.name || "当前选择"}
+      </view>
+    </Picker>
   );
 }
 

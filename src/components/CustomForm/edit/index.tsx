@@ -4,16 +4,17 @@
 
 import React, { useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
-import { View, Text } from 'remax/wechat';
+import { View } from 'remax/wechat';
+import { Button, Form, Skeleton } from 'annar';
+import { useQuery } from 'remax';
 
-import { Button, Col, Row, Form, Skeleton } from 'annar';
 import { ConTypes } from '@/components/CustomForm/controlTypes';
-
-import Approve from '@/components/CustomForm/Approve';
-import CopyTo from '@/components/CopyTo';
-import SectionHeader from '@/components/SectionHeader';
+// import Approve from '@/components/CustomForm/Approve';
+// import CopyTo from '@/components/CopyTo';
+// import SectionHeader from '@/components/SectionHeader';
 import useFormConfig from '@/hooks/useFormConfig';
 import useRefresh from '@/hooks/useRefresh';
+import { getConfigFormPath } from '@/components/CustomForm/routerConfig'
 
 import styles from '../index.less';
 
@@ -48,23 +49,20 @@ function reducer(state, action) {
 
 function BaseForm(props: IProps) {
   const {
-    match: {
-      params: { id },
-    },
     dispatch,
-    formCode,
     ISUSERCREATE,
     formdata,
     children,
-    curRouter,
     submitloading,
     // table,
   } = props;
+  const { path, id, formCode } = useQuery();
+  const config = getConfigFormPath(path)
 
   const { sysVersionId, versionId } = formdata;
   const { tableConfig, loading } = useFormConfig(formCode, { sysVersionId, versionId });
   const { containers = [], approvable } = tableConfig;
-  const values = { ...formdata, ...(curRouter.params || {}) };
+  const values = { ...formdata, ...(config.params || {}) };
 
   const refresh = useRefresh();
 
@@ -86,7 +84,7 @@ function BaseForm(props: IProps) {
         if (formdata.nextNodeApprovers) {
           reactDispatch({ type: 'nextNodeApprovers', data: formdata.nextNodeApprovers });
         }
-        await form.setFieldsValue({ ...formdata, ...(curRouter.params || {}) });
+        await form.setFieldsValue({ ...formdata, ...(config.params || {}) });
         refresh()
       }
       if (id && formdata.id) {
@@ -175,7 +173,8 @@ function BaseForm(props: IProps) {
   function deleteFlow() {
     dispatch({
       type: 'jgTableModel/removeRemote', payload: id, callback() {
-        wx.showToast({ title: "删除成功" });
+        wx.showToast({ title: '删除成功' });
+        wx.navigateBack()
         // NativeUtil.use("popWebHistory");
       }
     });
@@ -184,7 +183,8 @@ function BaseForm(props: IProps) {
   // 保存表单数据
   function saveFormData(formValues) {
     handleSubmit(formValues).then(() => {
-      wx.showToast({ title: "操作成功" });
+      wx.showToast({ title: '操作成功' });
+      wx.navigateBack()
       // NativeUtil.use("popWebHistory");
     });
   }
@@ -208,7 +208,8 @@ function BaseForm(props: IProps) {
         formCode
       },
       callback: () => {
-        wx.showToast({ title: "提交审批成功" })
+        wx.showToast({ title: '提交审批成}功' })
+        wx.navigateBack()
         // NativeUtil.use("popWebHistory");
       },
     });
@@ -222,7 +223,7 @@ function BaseForm(props: IProps) {
       })
       .catch(err => {
         const { errorFields } = err;
-        wx.showToast({ title: errorFields[0].errors.toString() })
+        message.error(errorFields[0].errors.toString());
       });
   }
 
@@ -250,19 +251,15 @@ function BaseForm(props: IProps) {
       },
       callback: (resp) => {
         if (resp === "Y") {
-          wx.showModal({
-            title: '审批预警提示',
-            content: '部分数据可能超出计划,是否继续执行审批',
-            okText: '是',
-            cancelText: '取消',
-            success(res) {
-              if (res.confirm) {
-                fn(formValues)
-              } else if (res.cancel) {
-                console.log('用户点击取消')
-              }
-            }
-          })
+          // Modal.confirm({
+          //   title: '审批预警提示',
+          //   content: '部分数据可能超出计划,是否继续执行审批',
+          //   okText: '是',
+          //   cancelText: '取消',
+          //   onOk: () => {
+          //     fn(formValues)
+          //   }
+          // })
         } else {
           fn(formValues)
         }
@@ -270,21 +267,20 @@ function BaseForm(props: IProps) {
     });
   }
   return (
-    <Skeleton loading={loading} active>
-      <View className={styles.baseForm}>
-        <View style={{ flex: 1, maxWidth: "100%" }}>
-          <Edit
-            iseditmode={id ? true : false}
-            formCode={formCode}
-            containers={containers}
-            // 本来不需要formdata的，但是会导致DataPicker默认显示不出值
-            formdata={values}
-            form={form}
-            constValues={curRouter.params}
-          >
-            {children}
-          </Edit>
-          {approvable && (
+    // <Skeleton loading={loading} active>
+    <View className={styles.baseForm}>
+      <Edit
+        iseditmode={id ? true : false}
+        formCode={formCode}
+        containers={containers}
+        // 本来不需要formdata的，但是会导致DataPicker默认显示不出值
+        formdata={values}
+        form={form}
+        constValues={config.params}
+      >
+        {children}
+      </Edit>
+      {/* {approvable && (
             <View style={{ padding: '0 12px 20px', backgroundColor: '#fff' }}>
               <SectionHeader
                 title="选择审批流程"
@@ -311,56 +307,54 @@ function BaseForm(props: IProps) {
                 </Col>
               </Row>
             </View>
-          )}
-          <View className="actionBtns" style={{ backgroundColor: "#fafafa" }}>
-            {approvable && (
-              <Button
-                type="primary"
-                onClick={() => validateFields((values) => {
-                  if (!approveProcessId) {
-                    message.warn('请选择审批流程');
-                    return;
-                  } checkExceed(values, submitToApprove)
-                })}
-                disabled={submitloading}
-              >
-                提交审批
-              </Button>
-            )}
-            <Button
-              style={{
-                backgroundColor: '#ffa646',
-                color: '#fff',
-                border: 'none',
+          )} */}
+      <View className="actionBtns" style={{ backgroundColor: "#fafafa" }}>
+        {approvable && (
+          <Button
+            type="primary"
+            onTap={() => validateFields((values) => {
+              if (!approveProcessId) {
+                wx.showToast({ title: '请选择审批流程', icon: "none" });
+                return;
+              } checkExceed(values, submitToApprove)
+            })}
+            disabled={submitloading}
+          >
+            提交审批
+          </Button>
+        )}
+        <Button
+          style={{
+            backgroundColor: '#ffa646',
+            color: '#fff',
+            border: 'none',
 
-              }}
-              disabled={submitloading}
-              onClick={() => validateFields((values) => checkExceed(values, saveFormData))}
-            >
-              保存
+          }}
+          disabled={submitloading}
+          onTap={() => validateFields((values) => checkExceed(values, saveFormData))}
+        >
+          保存
             </Button>
-            {id && (
-              <Button
-                type="danger"
-                onClick={deleteFlow}
-                disabled={submitloading}
-              >
-                删除
-              </Button>
-            )}
-          </View>
-        </View>
+        {id && (
+          <Button
+            look="danger"
+            onTap={deleteFlow}
+            disabled={submitloading}
+          >
+            删除
+          </Button>
+        )}
       </View>
-    </Skeleton>
+    </View>
+    // </Skeleton>
   );
 }
 
-export default connect(({ jgTableModel, menu, loading }) => ({
+export default connect(({ jgTableModel, loading }) => ({
   formdata: jgTableModel.item,
-  curRouter: menu.curRouter,
   submitloading:
     loading.effects['jgTableModel/approve'] ||
     loading.effects['jgTableModel/updateRemote'] ||
     loading.effects['jgTableModel/addRemote'] ||
     false,
-}))(withRouter(BaseForm));
+}))(BaseForm);

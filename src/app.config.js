@@ -7,6 +7,7 @@ module.exports = {
     'pages/task/index',
     'pages/approvepage/index',
     'pages/detailpage/index',
+    'pages/editpage/index',
     'pages/flowlist/index'
   ],
   window: {

@@ -3,6 +3,7 @@
 // 如果是修改sysVersionId,versionId取值来源拓展字段，新增的话取表单配置
 
 import React, { PureComponent } from 'react';
+import { View, Text } from 'remax/wechat';
 
 import { Form } from 'annar';
 import { ConTypes } from '@/components/CustomForm/controlTypes';
@@ -39,23 +40,10 @@ class BaseForm extends PureComponent<IProps> {
     FormEvent.clear(this.props.formCode);
   }
 
-  // 将当前控件依赖controlCode的extraProps属性存到当前控件中
-  getObserverExtraProps = referenceField => {
-    const { containers } = this.props;
-    for (let index = 0; index < containers.length; index + 1) {
-      const container = containers[index];
-      const control = container.controls.find(item => item.controlCode === referenceField);
-      if (control) {
-        const { extraProps } = control;
-        return extraProps;
-      }
-    }
-  };
-
   getFormItem = (data: JgFormProps.ControlConfig, containertype) => {
     const { form, formCode, parentformdata, formdata, iseditmode } = this.props;
     const {
-      extraProps: { nameCode, hidden },
+      extraProps: { referenceField, combineField, nameCode, hidden },
       controlCode,
       controlType,
       controlId,
@@ -70,64 +58,66 @@ class BaseForm extends PureComponent<IProps> {
       case ConTypes.IMAGEUPLOADER:
       case ConTypes.FILEUPLOADER:
       case ConTypes.INVOICE:
+      // 以下三个组件如果用表单默认样式会生成额外标签导致嵌套过深
+      case ConTypes.RADIO:
+      case ConTypes.SELECT:
+      case ConTypes.CHECKBOXG:
         noStyle = true
         break;
       default:
         break;
     }
     return (
-      <div
+      <View
         key={controlId}
         data-controlcode={controlCode}
         data-controltype={controlType}
         style={{ ...(hidden && { display: 'none' }) }}
-        className={`controltype${controlType}`}
       >
         {isEditAble ? (controlType === ConTypes.FILEUPLOADER ? (
           <FormItem
             name={controlCode}
+            border={false}
             data-id={controlId}
-            valueAlign="left"
             label={(
-              <span>
+              <Text>
                 {controlLabel}
-              </span>)}
+              </Text>)}
             noStyle={noStyle}
           >
             <FormItemData data={data} formdata={formdata} />
           </FormItem>) : (
             // 编辑情况下不显示上传附件
-            <FormItem noStyle={noStyle} >
-              {formInstance => (
-                <FormItem
-                  valueAlign="left"
-                  name={controlCode}
-                  rules={rules}
-                  label={noStyle ? "" : (
-                    <span>
-                      {controlLabel}&nbsp;
-                    </span>)}
-                  noStyle={noStyle}
-                  data-id={controlId}
-                >
-                  <FormEditItem
-                    valueAlign="left"
-                    data={data}
-                    form={form}
-                    formdata={{ ...formdata, ...formInstance.getFieldsValue() }}
-                    iseditmode={iseditmode}
-                    formCode={formCode}
-                    parentformdata={parentformdata}
-                  />
-                </FormItem>
-              )}
+            <FormItem
+              name={controlCode}
+              border={false}
+              rules={rules}
+              label={noStyle ? "" : (
+                <Text>
+                  {controlLabel}
+                </Text>)}
+              noStyle={noStyle}
+              data-id={controlId}
+            >
+              <FormEditItem
+                data={data}
+                form={form}
+                formdata={formdata}
+                iseditmode={iseditmode}
+                formCode={formCode}
+                parentformdata={parentformdata}
+              />
             </FormItem>)
         ) : (
             !(formdata[controlCode] === null || formdata[controlCode] === undefined) && (
-              <FormItem valueAlign="left" name={controlCode} data-id={controlId} label={noStyle ? "" : (
-                <span>
-                  {controlLabel}
-                </span>)}>
+              <FormItem
+                name={controlCode}
+                border={false}
+                data-id={controlId}
+                label={noStyle ? "" : (
+                  <Text>
+                    {controlLabel}
+                  </Text>)}>
                 <FormItemData data={data} formdata={formdata} />
               </FormItem>
             )
@@ -141,11 +131,12 @@ class BaseForm extends PureComponent<IProps> {
             data-id={controlId}
             label={controlLabel}
             style={{ display: 'none' }}
+            border={false}
           >
-            <span />
+            <Text />
           </FormItem>
         ) : null}
-      </div>
+      </View>
     );
   };
 
@@ -182,36 +173,27 @@ class BaseForm extends PureComponent<IProps> {
       // 详情默认添加创建人和创建时间
       if (currentIndex === 0 && approve) {
         forms.push(
-          <div data-controlcode="creatorInfo">
-            {formdata.creatorName && <FormItem valueAlign="left" label="创建人" key="creatorName">
-              <div>{formdata.creatorName}</div>
+          <View data-controlcode="creatorInfo">
+            {formdata.creatorName && <FormItem label="创建人" key="creatorName">
+              <View>{formdata.creatorName}</View>
             </FormItem>}
-            {formdata.createTime && <FormItem valueAlign="left" label="创建时间" key="createTime">
-              <div>{formdata.createTime}</div>
+            {formdata.createTime && <FormItem label="创建时间" key="createTime">
+              <View>{formdata.createTime}</View>
             </FormItem>}
             {formdata.sendUsers && (
-              <FormItem label="抄送人" valueAlign="left" key="sendUsers">
-                <div>
+              <FormItem label="抄送人" key="sendUsers">
+                <View>
                   {JSON.parse(formdata.sendUsers)
                     .map(item => item.name)
                     .join(',')}
-                </div>
+                </View>
               </FormItem>)}
-          </div>
+          </View>
         );
       }
 
       const formContainer = (
-        <div
-          key={container.containerId}
-          className="containers"
-          style={{
-            justifyContent: container.justifyContent || 'left',
-            textAlign: container.align || 'left',
-          }}
-        >
-          <div className="form-container-content">{forms}</div>
-        </div>
+        <View className="form-container-content" key={container.containerId}>{forms}</View>
       );
       return acc.concat(formContainer);
     }, []);
@@ -225,25 +207,23 @@ class BaseForm extends PureComponent<IProps> {
     const { children: ChildCom, formdata, parentformdata, form, containers, formCode } = this.props;
     const forms = this.getForms(containers);
     return (
-      <>
-        <Form
-          form={form}
-        >
-          {forms}
-          {ChildCom && (
-            <FormItem noStyle>
-              {formInstance => (
-                <ChildCom
-                  form={formInstance}
-                  formCode={formCode}
-                  formdata={{ ...formdata, ...formInstance.getFieldsValue() }}
-                  parentformdata={parentformdata}
-                />
-              )}
-            </FormItem>
-          )}
-        </Form>
-      </>
+      <Form
+        form={form}
+      >
+        {forms}
+        {ChildCom && (
+          <FormItem noStyle>
+            {formInstance => (
+              <ChildCom
+                form={formInstance}
+                formCode={formCode}
+                formdata={{ ...formdata, ...formInstance.getFieldsValue() }}
+                parentformdata={parentformdata}
+              />
+            )}
+          </FormItem>
+        )}
+      </Form>
     );
   }
 }

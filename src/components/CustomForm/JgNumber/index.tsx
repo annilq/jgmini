@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { InputNumber } from 'antd';
+import { Input, View, Text } from "remax/wechat"
+
 import { ValidatorTypes } from '@/components/CustomForm/controlTypes';
-import { TreePicker } from '@/components/CustomForm';
+// import { TreePicker } from '@/components/CustomForm';
 
 interface NumberProps extends JgFormProps.IFormProps {
   extraProps?: any;
@@ -21,7 +22,6 @@ class JgNumber extends PureComponent<NumberProps> {
       extraProps,
       validators,
       placeholder,
-      className,
       value,
       onChange,
       readOnly,
@@ -29,35 +29,35 @@ class JgNumber extends PureComponent<NumberProps> {
     } = this.props;
     // console.log(formdata[extraProps.unit]);
     // 数字的验证用antd自带的属性控制输入
-    const numberValidator =
-      validators && validators.find(item => item.validatorType === ValidatorTypes.NUMBER);
-    const numberProps: numberAttr = {};
-    if (numberValidator) {
-      const { validatorParam } = numberValidator;
-      if (validatorParam.minValue) {
-        numberProps.min = parseInt(validatorParam.minValue, 10);
-      }
-      if (validatorParam.maxValue) {
-        numberProps.max = parseInt(validatorParam.maxValue, 10);
-      }
-      if (validatorParam.scale) {
-        numberProps.precision = parseInt(validatorParam.scale, 10);
-      }
-    }
+    // const numberValidator =
+    //   validators && validators.find(item => item.validatorType === ValidatorTypes.NUMBER);
+    // const numberProps: numberAttr = {};
+    // if (numberValidator) {
+    //   const { validatorParam } = numberValidator;
+    //   if (validatorParam.minValue) {
+    //     numberProps.min = parseInt(validatorParam.minValue, 10);
+    //   }
+    //   if (validatorParam.maxValue) {
+    //     numberProps.max = parseInt(validatorParam.maxValue, 10);
+    //   }
+    //   if (validatorParam.scale) {
+    //     numberProps.precision = parseInt(validatorParam.scale, 10);
+    //   }
+    // }
     return (
-      <div className={className} style={{ display: 'flex' }}>
+      <View>
         {readOnly ? (
-          value
+          <Text>  {value}</Text>
         ) : (
-          <InputNumber
-            value={value}
-            {...numberProps}
-            placeholder={placeholder}
-            style={{ flex: 1, marginRight: '10px', alignSelf: 'center' }}
-            onChange={onChange}
-          />
-        )}
-        {extraProps.unit && (
+            <Input
+              type="digit"
+              value={value}
+              // {...numberProps}
+              placeholder={placeholder}
+              onInput={onChange}
+            />
+          )}
+        {/* {extraProps.unit && (
           <TreePicker
             extraProps={{
               nameCode: 'unit',
@@ -66,10 +66,9 @@ class JgNumber extends PureComponent<NumberProps> {
             }}
             readOnly
             value={formdata[extraProps.unit]}
-            store={window.g_app._store}
           />
-        )}
-      </div>
+        )} */}
+      </View>
     );
   }
 }

@@ -1,17 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text } from 'remax/wechat';
+import { View, Image } from 'remax/wechat';
 import { useNativeEffect, useQuery } from 'remax';
 import { usePageEvent } from 'remax/macro';
 
 // import SearchForm from '@/components/CustomForm/JgSearchForm';
-// import OperationButton from '@/components/OperationButton';
+import OperationButton from '@/components/OperationButton';
 import JgTable from '@/components/CustomForm/JgTable';
 
 // import styles from '@/common/styles/tableList.less';
-// import IndexAdd from '../../../../public/list-add.png';import { useQuery } from 'remax';
 import ListItemCell from '@/components/TableItem/ListItem';
 import { getServiceAndFormCodeFromPath } from '@/components/CustomForm/FormCodeService';
+import { getConfigFormPath } from '@/components/CustomForm/routerConfig';
 
 function Main(props) {
   const {
@@ -20,7 +20,8 @@ function Main(props) {
     jgTableModel: { data = { list: [] } },
   } = props;
   const { path } = useQuery();
-  const { formCode } = getServiceAndFormCodeFromPath(path)
+  const { formCode } = getServiceAndFormCodeFromPath(path);
+  const config = getConfigFormPath(path);
   // formCode与后台服务一样的名字
   const reset = () => {
     // 查看详情需要用到base，以及子表接口
@@ -29,15 +30,8 @@ function Main(props) {
   };
 
   // 展开编辑,编辑统一跳转到新页面，不在侧边滑出
-  const showEdit = (record) => {
-    const { location, history } = props;
-    const { pathname } = location;
-    if (record) {
-      history.push(`/editpage/${record.id}?path=${pathname}`);
-    } else {
-      history.push(`/editpage?path=${pathname}`);
-    }
-    // NativeUtil.pushWebHistory(history.goBack);
+  const showEdit = () => {
+    wx.navigateTo({ url: `/pages/editpage/index?path=${path}&formCode=${formCode}` });
   };
 
   const onSearch = (params) => {
@@ -69,10 +63,12 @@ function Main(props) {
   usePageEvent('onPullDownRefresh', () => {
     reset()
     return Promise.resolve()
-  })
+  });
+
   useNativeEffect(() => {
     reset()
   }, []);
+
   // console.log(data);
   return (
     <View>
@@ -87,16 +83,16 @@ function Main(props) {
             key={formCode}
           />
         </View> */}
-      {/* <OperationButton operationType="WRITE" operations={operations}>
-          <img src={IndexAdd} alt="新增"
-            style={{
-              width: 80, height: 80,
-              position: "fixed", bottom: "20px", right: 10,
-              zIndex: 999
-            }}
-            onClick={() => showEdit()}
-          />
-        </OperationButton> */}
+      <OperationButton operationType="WRITE" operations={config.operations}>
+        <Image src="/images/wfqd.png" alt="新增"
+          style={{
+            width: 84, height: 84,
+            position: "fixed", bottom: 40, right: 20,
+            zIndex: 999
+          }}
+          onClick={() => showEdit()}
+        />
+      </OperationButton>
       <JgTable
         formCode={formCode}
         data={data}

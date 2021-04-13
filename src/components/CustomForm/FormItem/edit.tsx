@@ -1,23 +1,26 @@
 import React from 'react';
-import { Input, Switch, Radio, Checkbox, Cell, Picker } from 'annar';
+import { Input, Switch, Radio, Checkbox, Cell } from 'annar';
+import { Textarea, Text } from "remax/wechat"
+
 import FormEvent from '@/utils/formevent';
 import styles from '../index.less';
 import { ConTypes } from '../controlTypes';
 import ErrorBoundary from './errorhandle';
 
 import {
-  DataPicker,
+  // DataPicker,
   DataSelecter,
   TreePicker,
-  FileUpload,
-  ImageUpload,
-  Address,
-  InvoiceUpload,
-  JgDatePicker,
+  // FileUpload,
+  // ImageUpload,
+  // Address,
+  // InvoiceUpload,
+  // JgDatePicker,
   JgNumber,
-  SubTable,
-  RelationData,
-  TaskTag,
+  Picker,
+  // SubTable,
+  // RelationData,
+  // TaskTag,
 } from '@/components/CustomForm';
 
 // import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
@@ -171,7 +174,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         break;
       case ConTypes.TEXTAREA:
         com = (
-          <Input
+          <Textarea
             className={styles.widgetContent}
             placeholder={placeHolder}
             {...formProps}
@@ -181,7 +184,6 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
       case ConTypes.NUMINPUT:
         com = (
           <JgNumber
-            className={styles.widgetContent}
             extraProps={data.extraProps}
             validators={data.validators}
             placeholder={placeHolder}
@@ -200,7 +202,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             {...formProps}
           >
             {(candidates, rest) => (
-              <RadioGroup options={candidates} className={styles.widgetContent} {...rest} />
+              <Picker data={candidates} {...rest} />
             )}
           </DataSelecter>
         );
@@ -216,7 +218,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             {...formProps}
           >
             {(candidates, rest) => (
-              <CheckboxGroup options={candidates} className={styles.widgetContent} {...rest} />
+              <Picker data={candidates} {...rest} />
             )}
           </DataSelecter>
         );
@@ -232,14 +234,10 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             {...formProps}
           >
             {(candidates, rest) => (
-              <Cell.Picker
-                icon="musicfill"
-                label="LINE UP"
-                align="right"
-                arrow
-                range={candidates}
-                rangeKey="value"
-                placeholder={placeHolder} {...rest}
+              <Picker
+                data={candidates}
+                placeholder={placeHolder}
+                {...rest}
               />
               // <Select placeholder={placeHolder} {...rest} allowClear>
               //   {candidates.map(item => (
@@ -251,49 +249,56 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         );
         break;
       case ConTypes.DATEPICKER:
-        com = (
-          <JgDatePicker
-            className={styles.widgetContent}
-            extraProps={{ formatId: extraProps.number }}
-            {...formProps}
-          />
-        );
+        // com = (
+        //   <JgDatePicker
+        //     className={styles.widgetContent}
+        //     extraProps={{ formatId: extraProps.number }}
+        //     {...formProps}
+        //   />
+        // );
+        com = <Text>JgDatePicker</Text>
+
         break;
-      // case ConTypes.DATERANGE:
-      //   com = <RangePicker className={styles.widgetContent} {...formProps} />;
-      //   break;
+      case ConTypes.DATERANGE:
+        // com = <RangePicker className={styles.widgetContent} {...formProps} />;
+        com = <Text>RangePicker</Text>
+
+        break;
       case ConTypes.SWITCH:
-        com = (
-          <Switch
-            className={styles.widgetContent}
-            checkedChildren="是"
-            checked={!!data.value}
-            unCheckedChildren="否"
-            {...formProps}
-          />
-        );
+        // com = (
+        //   <Switch
+        //     className={styles.widgetContent}
+        //     checkedChildren="是"
+        //     checked={!!data.value}
+        //     unCheckedChildren="否"
+        //     {...formProps}
+        //   />
+        // );
+        com = <Text>Switch</Text>
+
         break;
       case ConTypes.DATAPICKER:
-        com = (
-          <DataPicker
-            extraProps={{
-              formType: extraProps.formType,
-              formCode: extraProps.formCode,
-              nameCode: extraProps.nameCode,
-              nameCodeKey: extraProps.nameCodeKey,
-              codeKey: extraProps.codeKey,
-              combineField: extraProps.combineField,
-              combineMapTo: extraProps.combineMapTo,
-              combineScope: extraProps.combineScope,
-              multiple: extraProps.multiple,
-              requestParams: extraProps.requestParams,
-            }}
-            form={form}
-            placeholder={placeHolder}
-            onSelect={value => this.onSelect(value, id, extraProps)}
-            {...formProps}
-          />
-        );
+        // com = (
+        //   <DataPicker
+        //     extraProps={{
+        //       formType: extraProps.formType,
+        //       formCode: extraProps.formCode,
+        //       nameCode: extraProps.nameCode,
+        //       nameCodeKey: extraProps.nameCodeKey,
+        //       codeKey: extraProps.codeKey,
+        //       combineField: extraProps.combineField,
+        //       combineMapTo: extraProps.combineMapTo,
+        //       combineScope: extraProps.combineScope,
+        //       multiple: extraProps.multiple,
+        //       requestParams: extraProps.requestParams,
+        //     }}
+        //     form={form}
+        //     placeholder={placeHolder}
+        //     onSelect={value => this.onSelect(value, id, extraProps)}
+        //     {...formProps}
+        //   />
+        // );
+        com = <Text>datapicker</Text>
         break;
       case ConTypes.TREEPICKER:
         com = (
@@ -305,48 +310,57 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
               parentNodeDisable: extraProps.parentNodeDisable,
               candidates: extraProps.candidates,
             }}
-            placeholder={placeHolder}
             disabled={false}
             {...formProps}
           />
         );
         break;
       case ConTypes.FILEUPLOADER:
-        com = <FileUpload {...formProps} />;
+        // com = <FileUpload {...formProps} />;
+        com = <Text>FileUpload</Text>
+
         break;
       case ConTypes.IMAGEUPLOADER:
-        com = <ImageUpload {...formProps} />;
+        // com = <ImageUpload {...formProps} />;
+        com = <Text>ImageUpload</Text>
         break;
       case ConTypes.ADDRESS:
-        com = <Address {...formProps} />;
+        // com = <Address {...formProps} />;
+        com = <Text>Address</Text>
         break;
       case ConTypes.LOCATION:
+        com = <Text>LOCATION</Text>
         break;
       case ConTypes.INVOICE:
-        com = <InvoiceUpload form={form} {...formProps} />;
+        // com = <InvoiceUpload form={form} {...formProps} />;
+        com = <Text>InvoiceUpload</Text>
         break;
       case ConTypes.SUBTABLE:
-        com = (
-          <SubTable
-            extraProps={{
-              formCode: extraProps.formCode,
-              referenceField: extraProps.referenceField,
-              referenceMapTo: extraProps.referenceMapTo,
-              referenceType: extraProps.referenceType,
-            }}
-            parentFormCode={this.props.formCode}
-            {...formProps}
-          />
-        );
+        // com = (
+        //   <SubTable
+        //     extraProps={{
+        //       formCode: extraProps.formCode,
+        //       referenceField: extraProps.referenceField,
+        //       referenceMapTo: extraProps.referenceMapTo,
+        //       referenceType: extraProps.referenceType,
+        //     }}
+        //     parentFormCode={this.props.formCode}
+        //     {...formProps}
+        //   />
+        // );
+        com = <Text>SubTable</Text>
+
         break;
       case ConTypes.RelationData:
-        com = <RelationData formdata={formdata} config={extraProps} {...formProps} />;
+        // com = <RelationData formdata={formdata} config={extraProps} {...formProps} />;
+        com = <Text>RelationData</Text>
+
         break;
       case ConTypes.TASK:
         // formCode
-        com = <TaskTag className={styles.widgetContent} formdata={formdata} {...formProps} />;
+        // com = <TaskTag className={styles.widgetContent} formdata={formdata} {...formProps} />;
+        com = <Text>TaskTag</Text>
         break;
-
       default:
         break;
     }
@@ -354,7 +368,13 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
   };
 
   render() {
-    const Com = this.getRenderByType();
+    const { data } = this.props
+    let Com
+    try {
+      Com = this.getRenderByType();
+    } catch (error) {
+      console.log(data);
+    }
     return <>{Com}</>;
   }
 }
