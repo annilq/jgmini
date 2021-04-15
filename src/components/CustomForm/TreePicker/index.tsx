@@ -3,9 +3,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import memoizeOne from 'memoize-one';
 
-import { Selector, SelectorPopup, Cell } from 'annar';
+import {  SelectorPopup } from 'annar';
 import { baseUrl } from '@/services/api';
-import { View, Text, Picker } from 'remax/wechat';
+import { Text } from 'remax/wechat';
 import { useNativeEffect } from 'remax';
 
 function TreePicker(props) {
@@ -20,6 +20,7 @@ function TreePicker(props) {
     extraProps: { type, url, candidates },
     ...rest
   } = props;
+
   const queryData = () => {
     // 这里会存在多个不同的url请求，所以还不能用公共的fetchBackEndDataloading控制
     if (url && !BackEndData[baseUrl + url]) {
@@ -68,32 +69,31 @@ function TreePicker(props) {
   }
   // console.log(data);
   const generatorRangeData = (data) => {
-    const result = [];
-    data.forEach(({ name, id, children }) => {
-      const col = { name, id }
-      result.push(col);
-      // if (children) {
-      //   const subRange = generatorRangeData(children);
-      // }
+    return data.map(({ name, id, children }) => {
+      const col = { text: name, value: id, children: [] }
+      if (children && children.length > 0) {
+        col.children = generatorRangeData(children);
+      } else {
+        col.children = [col]
+      }
+      return col
     });
-    return result
   }
-  const range = generatorRangeData(data)
-  const current = range.find(item => item.id === value);
+  const options = generatorRangeData(data)
   // console.log(current, value);
+  const handleOnChange = (value: any, valueStr: any) => {
+    onChange(value)
+  }
   return (
-    <Picker
-      mode="multiSelector"
-      value={value[0]}
-      range={[range]}
-      rangeKey="name"
-      onColumnChange={() => { }}
-      onChange={(e) => { const index = e.detail.value[0]; onChange(range[index].id) }}
+    <SelectorPopup
+      options={options}
+      onChange={handleOnChange}
+      value={value}
+      title={placeholder}
+      placeholder="请选择"
     >
-      <view>
-        {current && current.name || "当前选择"}
-      </view>
-    </Picker>
+      {name}
+    </SelectorPopup>
   );
 }
 
