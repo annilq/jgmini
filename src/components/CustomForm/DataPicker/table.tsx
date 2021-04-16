@@ -1,5 +1,4 @@
 import React from 'react';
-
 import FormItemData from '@/components/CustomForm/FormItem/detail';
 import List from '@/components/DataList';
 import PickerItemCell from '@/components/TableItem/PickerItem';
@@ -38,26 +37,17 @@ function Index(props: IProps) {
   const columnsData = getColumnsFromContainersByFliter(tableConfig.containers);
   const columns = getTableColumns(columnsData);
 
-  const listHeight = {
-    height: 'calc(100vh - 56px)',
-    overflowY: 'scroll',
-    paddingBottom: "70px"
-  };
   return (
-    <div style={listHeight}>
-      <List
-        renderItem={data => (
-          <List.Item>
-            <PickerItemCell data={data} columns={columns} />
-          </List.Item >
-        )}
-        loading={tableloading || dataloading}
-        data={data}
-        loadMore={loadMore}
-        rowSelection={rowSelection}
-        rowKey={rowKey}
-      />
-    </div>
+    <List
+      renderItem={data => (
+        <PickerItemCell data={data} columns={columns} />
+      )}
+      loading={tableloading || dataloading}
+      data={data}
+      loadMore={loadMore}
+      rowSelection={rowSelection}
+      rowKey={rowKey}
+    />
   );
 }
 

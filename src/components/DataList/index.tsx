@@ -38,7 +38,6 @@ function Main(props: Iprops) {
           />
         );
         break;
-
       case 'checkbox':
         RenderList = (
           <CheckBoxList
@@ -50,7 +49,6 @@ function Main(props: Iprops) {
           />
         );
         break;
-
       default:
         break;
     }
@@ -80,15 +78,12 @@ function RadioList(props) {
     props.onChange([value], [item]);
   }
   return (
-    <Radio.Group onChange={(e) => onChange(e.target.value)} value={value} style={{ width: '100%' }}>
-      <List
-        renderItem={(item, index) => (
-          <Radio value={item[rowKey]} className={styles.radioStyle}>
-            {renderItem(item, index)}
-          </Radio>
-        )}
-        dataSource={data.list || []}
-      />
+    <Radio.Group onChange={(value) => onChange(value)} value={value} direction="column">
+      {data.list.map((item, index) => (
+        <Radio value={item[rowKey]}>
+          {renderItem(item, index)}
+        </Radio>
+      ))}
     </Radio.Group>
   );
 }
@@ -101,15 +96,12 @@ function CheckBoxList(props) {
   }
 
   return (
-    <Checkbox.Group onChange={(value) => onChange(value)} value={value} style={{ width: '100%' }}>
-      <List
-        renderItem={(item, index) => (
-          <Checkbox value={item[rowKey]} className={styles.radioStyle}>
-            {renderItem(item, index)}
-          </Checkbox>
-        )}
-        dataSource={data.list || []}
-      />
+    <Checkbox.Group onChange={(value) => onChange(value)} value={value} direction="column">
+      {data.list.map((item, index) => (
+        <Checkbox value={item[rowKey]}>
+          {renderItem(item, index)}
+        </Checkbox>
+      ))}
     </Checkbox.Group>
   );
 }

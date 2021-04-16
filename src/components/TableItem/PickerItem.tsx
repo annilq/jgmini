@@ -15,18 +15,16 @@ function TableItemCell(props: IProps) {
   const defalutColsLength = 3
   const cols = columns.slice(0, defalutColsLength);
   return (
-    <View className={styles['list-item']}>
-      <View className={styles['list-item-container']}>
-        <View className={styles['list-item-content']} style={{ padding: "10px 0" }}>
-          {cols.map((column, index) => (
-            <View key={column.title} data-from="datapicker">
-              <View style={{ maxWidth: 120 ,minWidth: 70 }}>{column.title}:</View>
-              {column.render
-                ? column.render(data[column.dataIndex], data, index)
-                : (data[column.dataIndex] || "无数据")}
-            </View>
-          ))}
-        </View>
+    <View className={styles['list-item']} style={{ padding: "10px 0" }}>
+      <View className={styles['list-item-content']}>
+        {cols.map((column, index) => (
+          <View key={column.title} data-from="datapicker" style={{ display: "flex" }}>
+            <View style={{ maxWidth: 120, minWidth: 70 }}>{column.title}:</View>
+            {column.render
+              ? column.render(data[column.dataIndex], data, index)
+              : (data[column.dataIndex] || "无数据")}
+          </View>
+        ))}
       </View>
     </View >
   );

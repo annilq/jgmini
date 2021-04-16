@@ -25,7 +25,7 @@ import Picker from './Picker';
 
 export {
   // Address,
-  // DataPicker,
+  DataPicker,
   DataSelecter,
   Edit,
   // Detail,

@@ -8,7 +8,7 @@ import { ConTypes } from '../controlTypes';
 import ErrorBoundary from './errorhandle';
 
 import {
-  // DataPicker,
+  DataPicker,
   DataSelecter,
   TreePicker,
   // FileUpload,
@@ -275,27 +275,26 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
 
         break;
       case ConTypes.DATAPICKER:
-        // com = (
-        //   <DataPicker
-        //     extraProps={{
-        //       formType: extraProps.formType,
-        //       formCode: extraProps.formCode,
-        //       nameCode: extraProps.nameCode,
-        //       nameCodeKey: extraProps.nameCodeKey,
-        //       codeKey: extraProps.codeKey,
-        //       combineField: extraProps.combineField,
-        //       combineMapTo: extraProps.combineMapTo,
-        //       combineScope: extraProps.combineScope,
-        //       multiple: extraProps.multiple,
-        //       requestParams: extraProps.requestParams,
-        //     }}
-        //     form={form}
-        //     placeholder={placeHolder}
-        //     onSelect={value => this.onSelect(value, id, extraProps)}
-        //     {...formProps}
-        //   />
-        // );
-        com = <Text>datapicker</Text>
+        com = (
+          <DataPicker
+            extraProps={{
+              formType: extraProps.formType,
+              formCode: extraProps.formCode,
+              nameCode: extraProps.nameCode,
+              nameCodeKey: extraProps.nameCodeKey,
+              codeKey: extraProps.codeKey,
+              combineField: extraProps.combineField,
+              combineMapTo: extraProps.combineMapTo,
+              combineScope: extraProps.combineScope,
+              multiple: extraProps.multiple,
+              requestParams: extraProps.requestParams,
+            }}
+            form={form}
+            placeholder={placeHolder}
+            onSelect={value => this.onSelect(value, id, extraProps)}
+            {...formProps}
+          />
+        );
         break;
       case ConTypes.TREEPICKER:
         com = (

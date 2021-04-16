@@ -62,6 +62,7 @@ class BaseForm extends PureComponent<IProps> {
       case ConTypes.RADIO:
       case ConTypes.SELECT:
       case ConTypes.CHECKBOXG:
+      case ConTypes.DATAPICKER:
         noStyle = true
         break;
       default:

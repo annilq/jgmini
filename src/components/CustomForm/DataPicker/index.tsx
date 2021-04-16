@@ -1,13 +1,9 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { SearchOutlined } from '@ant-design/icons';
-import { Input, Button } from 'antd';
-import Layer from '@/components/Layer';
-import LayerHeader from '@/components/LayerHeader';
-import SearchForm from '@/components/CustomForm/JgSearchForm';
+import { Button, Popup, Cell } from 'annar';
+import { View } from 'remax/wechat';
+// import SearchForm from '@/components/CustomForm/JgSearchForm';
 import { flatdata } from '@/models/jgtablemodel';
 import getServiceFromFormCode, { FormCodeType } from '@/components/CustomForm/FormCodeService';
-import { isProjectMode } from "@/utils/utils"
 
 import TablePicker from './table';
 
@@ -27,10 +23,7 @@ interface IStates {
   data: { list: any[] };
   [index: string]: any;
 }
-@connect(({ project, account }) => ({
-  projectId: project.project.id,
-  user: account.user || NativeUtil.use("getUserInfo"),
-}))
+
 class Main extends PureComponent<IProps, IStates> {
   service: any;
   state = {
@@ -43,25 +36,8 @@ class Main extends PureComponent<IProps, IStates> {
     params: {},
   };
 
-  componentDidMount() {
-    const { extraProps: { isOperator }, onChange, user, onSelect } = this.props;
-    // imgUrl: "测试"
-    // name: "小二"
-    // position: "https://jgucenter.oss-cn-hangzhou.aliyuncs.com/ucenter/467681936937435136/1604627192947.jpg"
-    // tenantId: "467681936937435136"
-    // userId: "4144"
-    // userName: "小二"
-    const newUser = {
-      ...user, id: user.userId
-    }
-    if (isOperator) {
-      onSelect(newUser)
-      onChange(newUser.userId);
-    }
-  }
-
   queryData = async (params?: any) => {
-    const { projectId, extraProps } = this.props;
+    const { extraProps } = this.props;
     const { formCode, formType } = extraProps;
     const {
       data: { list },
@@ -85,7 +61,6 @@ class Main extends PureComponent<IProps, IStates> {
       ...searchParam,
       ...newParam,
       ...paramField,
-      ...((isProjectMode() && projectId && { projectId }) || {}),
       approveStatus: 'COMPLETE',
     });
     if (response) {
@@ -170,33 +145,7 @@ class Main extends PureComponent<IProps, IStates> {
       }
       onSelect(newData);
     }
-    NativeUtil.use("popWebHistory");
-  };
-
-  checkDisable = () => {
-    const {
-      extraProps: { combineField, combineScope },
-      formdata,
-    } = this.props;
-    let disable = false,
-      combineFieldValue;
-    //如果依赖的数据没值，则不能选择 关联数据要先选择才行
-    if (combineField) {
-      if (combineScope === 1) {
-        combineFieldValue = formdata[combineField];
-      } else {
-        // 作为引用表使用，combineField可能被多个表关联,取目前所在主表依赖的值
-        // 并且取值从引用表单拿，而不是表单本身
-        // 判断子表是否与主表关联
-        if (this.hasRelation(combineField)) {
-          combineFieldValue = this.getQueryParam(combineField);
-        } else {
-          return false;
-        }
-      }
-      disable = !combineFieldValue;
-    }
-    return disable;
+    this.handleCancel()
   };
 
   // 目前只支持单个查询
@@ -281,11 +230,9 @@ class Main extends PureComponent<IProps, IStates> {
       placeholder,
       extraProps: { multiple, codeKey, combineField, formCode },
       readOnly,
-      children: Children,
     } = this.props;
     const { visible, data, tableLoading, selectedRowKeys } = this.state;
     const name = this.getShowName();
-    const disable = this.checkDisable();
 
     const rowSelection: any = {
       hideDefaultSelections: true,
@@ -302,42 +249,25 @@ class Main extends PureComponent<IProps, IStates> {
         },
       });
     return (
-      <div style={style}>
-        {Children ? (
-          React.cloneElement(Children, {
-            onClick: this.showModal,
-            allowClear: true,
-            onChange: () => this.props.onChange(null),
-            suffix: <SearchOutlined onClick={(e) => { e.stopPropagation(); this.showModal() }} />,
-          })
-        ) : (
-            <Input
-              // 如果有combineField值说明有依赖关联，不能让用选择
-              disabled={!readOnly && !!disable}
-              value={name}
-              // 这个readOnly是为了样式显示
-              {...!name && { readOnly: true }}
-              onClick={readOnly ? () => { } : this.showModal}
-              title={name}
-              placeholder={placeholder}
-              {...!readOnly && { allowClear: true, onChange: () => this.props.onChange(null) }}
-              suffix={readOnly ? false : <SearchOutlined onClick={(e) => { e.stopPropagation(); this.showModal() }} />}
-            />
-          )}
-        <Layer
-          type="drawer"
-          title={
-            <LayerHeader
-              onClose={() => this.handleCancel()}
-              title={placeholder}
-            />
-          }
-          width="100%"
-          visible={visible}
-          style={{ transform: 'none', overflow: "hidden" }}
+      <View style={style}>
+        <Cell.Input
+          arrow
+          border={false}
+          label={placeholder}
+          // 如果有combineField值说明有依赖关联，不能让用选择
+          value={name}
+          onFocus={readOnly ? () => { } : this.showModal}
+        />
+        <Popup
+          position="right"
+          square
+          open={visible}
+          onClose={() => {
+            this.handleCancel();
+          }}
+          style={{ width: "100%", padding: "0 20px" }}
         >
-          <>
-            <div style={{
+          {/* <View style={{
               padding: "10px 12px",
               backgroundColor: "#f5f5f5"
             }}>
@@ -348,27 +278,26 @@ class Main extends PureComponent<IProps, IStates> {
                 reset={() => this.searchhandle()}
                 onSearch={params => this.searchhandle(params)}
               />
-            </div>
-            <TablePicker
-              // 在编辑基础数据时候需要用到formCode获取基础表需要的服务
-              loading={tableLoading}
-              formCode={formCode}
-              data={data}
-              onRow={onRow}
-              rowSelection={rowSelection}
-              loadMore={params => this.queryData(params)}
-            />
-            <div className="actionBtns">
-              <Button
-                onClick={() => this.confirm(selectedRowKeys)}
-                type="primary"
-              >
-                确定
+            </View> */}
+          <TablePicker
+            // 在编辑基础数据时候需要用到formCode获取基础表需要的服务
+            loading={tableLoading}
+            formCode={formCode}
+            data={data}
+            onRow={onRow}
+            rowSelection={rowSelection}
+            loadMore={params => this.queryData(params)}
+          />
+          <View className="actionBtns">
+            <Button
+              onTap={() => this.confirm(selectedRowKeys)}
+              type="primary"
+            >
+              确定
                 </Button>
-            </div>
-          </>
-        </Layer>
-      </div>
+          </View>
+        </Popup>
+      </View>
     );
   }
 }
