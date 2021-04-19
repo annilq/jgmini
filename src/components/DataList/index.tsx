@@ -55,7 +55,7 @@ function Main(props: Iprops) {
   }
   usePageEvent('onReachBottom', () => {
     console.log('onReachBottom');
-    !loading && data.currentPage < data.totalPage &&
+    !loading && data.currentPage < data.totalPage && loadMore &&
       loadMore({
         currentPage: data.currentPage + 1,
         pageSize: data.pageSize,

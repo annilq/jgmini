@@ -5,7 +5,7 @@
 import React, { useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'remax/wechat';
-import { Button, Form, Skeleton } from 'annar';
+import { Button, Form } from 'annar';
 import { useQuery } from 'remax';
 
 import { ConTypes } from '@/components/CustomForm/controlTypes';
@@ -61,7 +61,7 @@ function BaseForm(props: IProps) {
 
   const { sysVersionId, versionId } = formdata;
   const { tableConfig, loading } = useFormConfig(formCode, { sysVersionId, versionId });
-  const { containers = [], approvable } = tableConfig;
+  const { containers = [], approvable, cid } = tableConfig;
   const values = { ...formdata, ...(config.params || {}) };
 
   const refresh = useRefresh();
@@ -143,6 +143,7 @@ function BaseForm(props: IProps) {
             nextNodeApprovers,
             formCode
           },
+          path,
           callback(data) {
             if (data.code === 0) {
               resolve({ id });
@@ -158,6 +159,7 @@ function BaseForm(props: IProps) {
         dispatch({
           type: 'jgTableModel/addRemote',
           payload: { ...submitData, approveProcessId, nextNodeApprovers, sendUsers, formCode },
+          path,
           callback(data) {
             if (data.code === 0) {
               resolve({ id: data.resp });
@@ -216,15 +218,13 @@ function BaseForm(props: IProps) {
   }
 
   function validateFields(fn) {
-    form
-      .validateFields()
-      .then(values => {
-        fn(values);
-      })
-      .catch(err => {
-        const { errorFields } = err;
-        message.error(errorFields[0].errors.toString());
-      });
+    const [valid] = form.validateFields()
+    if (valid) {
+      console.log(form.getFieldsValue());
+      fn(form.getFieldsValue())
+    } else {
+      wx.showToast({ title: "" })
+    }
   }
 
   // 判断是否需要验证超出预警
@@ -323,7 +323,7 @@ function BaseForm(props: IProps) {
             提交审批
           </Button>
         )}
-        <Button
+        {cid && <Button
           style={{
             backgroundColor: '#ffa646',
             color: '#fff',
@@ -334,7 +334,7 @@ function BaseForm(props: IProps) {
           onTap={() => validateFields((values) => checkExceed(values, saveFormData))}
         >
           保存
-            </Button>
+            </Button>}
         {id && (
           <Button
             look="danger"

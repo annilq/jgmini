@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Switch, Radio, Checkbox, Cell } from 'annar';
+import { Input } from 'annar';
 import { Textarea, Text } from "remax/wechat"
 
 import FormEvent from '@/utils/formevent';
@@ -24,15 +24,12 @@ import {
 } from '@/components/CustomForm';
 
 // import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
-const RadioGroup = Radio.Group;
-const CheckboxGroup = Checkbox.Group;
 
 enum EmitType {
   onChange = 1,
   onSelect,
 }
 
-// @ErrorBoundary('组件渲染错误')
 class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
   onChange = (e, id) => {
     // 如果不触发onChange事件，表单验证会失败
@@ -148,14 +145,14 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
     // formProps:{formdata,onChange ,value,id}接口数据，用来获取关联值
     const { data, form, id, value, formdata, parentformdata, iseditmode } = this.props;
     // 表单属性
-    const { extraProps, placeHolder, controlType } = data;
+    const { extraProps, placeHolder, controlType, controlCode } = data;
     // console.log(this.props);
     // console.log(data);
     if (extraProps.combineField) {
       this.addListener(data);
     }
     const formProps = {
-      id,
+      id: controlCode,
       value,
       // formdata,
       readOnly: data.extraProps.readOnly,
@@ -374,4 +371,4 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
     return <>{Com}</>;
   }
 }
-export default FormEditItem;
+export default ErrorBoundary('组件渲染错误')(FormEditItem);

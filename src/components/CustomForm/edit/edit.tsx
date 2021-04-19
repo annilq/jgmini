@@ -87,7 +87,7 @@ class BaseForm extends PureComponent<IProps> {
               </Text>)}
             noStyle={noStyle}
           >
-            <FormItemData data={data} formdata={formdata} />
+            <FormItemData data={data} formdata={form.getFieldsValue()} />
           </FormItem>) : (
             // 编辑情况下不显示上传附件
             <FormItem
@@ -105,7 +105,7 @@ class BaseForm extends PureComponent<IProps> {
               <FormEditItem
                 data={data}
                 form={form}
-                formdata={formdata}
+                formdata={form.getFieldsValue()}
                 iseditmode={iseditmode}
                 formCode={formCode}
                 parentformdata={parentformdata}
@@ -122,7 +122,7 @@ class BaseForm extends PureComponent<IProps> {
                   <Text>
                     {controlLabel}
                   </Text>)}>
-                <FormItemData data={data} formdata={formdata} />
+                <FormItemData data={data} formdata={form.getFieldsValue()} />
               </FormItem>
             )
           )}

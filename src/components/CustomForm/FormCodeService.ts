@@ -79,7 +79,7 @@ function getServiceFromFormCode(formCode: FormCodeType) {
   return get(Service, serviceName);
 }
 
-function getServiceAndFormCodeFromPath(path) {
+function getServiceAndFormCodeFromPath(path = "") {
   const ifSystemForm = path.indexOf('usercreate') > -1;
   if (ifSystemForm) {
     const pathArr = path.split('/');

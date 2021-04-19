@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Button, Popup, Cell } from 'annar';
-import { View } from 'remax/wechat';
+import { View, ScrollView } from 'remax/wechat';
 // import SearchForm from '@/components/CustomForm/JgSearchForm';
 import { flatdata } from '@/models/jgtablemodel';
 import getServiceFromFormCode, { FormCodeType } from '@/components/CustomForm/FormCodeService';
@@ -224,6 +224,12 @@ class Main extends PureComponent<IProps, IStates> {
     this.queryData(searchParams);
   }
 
+  loadMore = () => {
+    const { data } = this.state;
+    if (data.currentPage < data.totalPage) {
+      this.queryData({ currentPage: data.currentPage + 1, pageSize: 10 })
+    }
+  }
   render() {
     const {
       style,
@@ -233,21 +239,13 @@ class Main extends PureComponent<IProps, IStates> {
     } = this.props;
     const { visible, data, tableLoading, selectedRowKeys } = this.state;
     const name = this.getShowName();
-
     const rowSelection: any = {
       hideDefaultSelections: true,
       type: multiple ? 'checkbox' : 'radio',
       onChange: this.rowSelectionChange,
       selectedRowKeys,
     };
-    const onRow = multiple
-      ? null
-      : record => ({
-        onDoubleClick: () => {
-          this.rowSelectionChange([record[codeKey || 'id']], [record]);
-          this.confirm([record[codeKey || 'id']]);
-        },
-      });
+
     return (
       <View style={style}>
         <Cell.Input
@@ -265,7 +263,7 @@ class Main extends PureComponent<IProps, IStates> {
           onClose={() => {
             this.handleCancel();
           }}
-          style={{ width: "100%", padding: "0 20px" }}
+          style={{ width: "100%", padding: "0 20px", height: "100%", }}
         >
           {/* <View style={{
               padding: "10px 12px",
@@ -279,23 +277,27 @@ class Main extends PureComponent<IProps, IStates> {
                 onSearch={params => this.searchhandle(params)}
               />
             </View> */}
-          <TablePicker
-            // 在编辑基础数据时候需要用到formCode获取基础表需要的服务
-            loading={tableLoading}
-            formCode={formCode}
-            data={data}
-            onRow={onRow}
-            rowSelection={rowSelection}
-            loadMore={params => this.queryData(params)}
-          />
-          <View className="actionBtns">
-            <Button
-              onTap={() => this.confirm(selectedRowKeys)}
-              type="primary"
-            >
-              确定
+          <ScrollView
+            scrollY
+            onScrollToLower={this.loadMore}
+            style={{ height: "100%", paddingBottom: 140, boxSizing: "border-box" }}
+          >
+            <TablePicker
+              // 在编辑基础数据时候需要用到formCode获取基础表需要的服务
+              loading={tableLoading}
+              formCode={formCode}
+              data={data}
+              rowSelection={rowSelection}
+            />
+            <View className="actionBtns" style={{ position: "fixed" }}>
+              <Button
+                onTap={() => this.confirm(selectedRowKeys)}
+                type="primary"
+              >
+                确定
                 </Button>
-          </View>
+            </View>
+          </ScrollView>
         </Popup>
       </View>
     );
