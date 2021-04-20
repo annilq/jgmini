@@ -56,7 +56,7 @@ button.addNewBtn {
   background-color: #fff;
   display: flex;
   align-items:center; 
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
 }
@@ -71,7 +71,8 @@ button.addNewBtn {
   color:#fff
 }
 
-.controltype28 .anna-cell-container{
+[data-controltype='28'] .anna-cell-container{
+  /* 编辑时候子表样式 */
   display: block;
 }
 .anna-tabs{

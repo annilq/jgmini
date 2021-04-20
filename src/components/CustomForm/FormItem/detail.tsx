@@ -1,21 +1,18 @@
 import React, { PureComponent } from 'react';
 import { View, Text } from 'remax/wechat';
 
-// import ErrorBoundary from './errorhandle';
+import ErrorBoundary from './errorhandle';
 
 import { ConTypes } from '@/components/CustomForm/controlTypes';
 // import LayerPage from '@/components/LayerPage';
 
-// import {
-//   FilePreview,
-//   ImagePreview,
-//   TreePicker,
-//   InvoiceUpload,
-// } from '@/components/CustomForm';
+import {
+  FilePreview,
+  ImagePreview,
+  TreePicker,
+  DataSelecter,
+} from '@/components/CustomForm';
 
-import TreePicker from '@/components/CustomForm/TreePicker';
-import ImagePreview from '@/components/CustomForm/ImagePreview';
-import DataSelecter from '@/components/CustomForm/DataSelecter';
 // import TagList from '@/components/CustomForm/TaskTag/taglist';
 import TableList from '@/components/CustomForm/SubTable/detailList';
 // import Address from '@/components/CustomForm/Address/detail';
@@ -31,7 +28,6 @@ interface FormDetailProps {
   formdata: object;
 }
 
-// @ErrorBoundary
 class FormItemData extends PureComponent<FormDetailProps> {
   getRenderByFormData = (data: FormDetailProps['data']): any => {
     const { formdata = {} } = this.props;
@@ -156,28 +152,28 @@ class FormItemData extends PureComponent<FormDetailProps> {
       //   //   break;
 
       //   // 显示文件列表
-      //   case ConTypes.FILEUPLOADER:
-      //     // render = <FilePreview files={value} label={controlLabel} />;
-      //     render = <FilePreview value={value} />;
-      //     break;
+      case ConTypes.FILEUPLOADER:
+        // render = <FilePreview files={value} label={controlLabel} />;
+        render = <FilePreview value={value} />;
+        break;
       //   // 显示文件列表
       //   // 显示图片列表
       case ConTypes.IMAGEUPLOADER:
         render = <ImagePreview files={value} />;
         // render = <ImagePreview value={value} />;
         break;
-        case ConTypes.SUBTABLE:
-          // formCode
-          render = (
-            <TableList
-              // title={controlLabel}
-              value={value}
-              extraProps={extraProps}
-              observerextraprops={observerextraprops}
-              formdata={formdata}
-            />
-          );
-          break;
+      case ConTypes.SUBTABLE:
+        // formCode
+        render = (
+          <TableList
+            // title={controlLabel}
+            value={value}
+            extraProps={extraProps}
+            observerextraprops={observerextraprops}
+            formdata={formdata}
+          />
+        );
+        break;
       //   case ConTypes.RelationData:
       //     // formCode
       //     render = (
@@ -215,4 +211,4 @@ class FormItemData extends PureComponent<FormDetailProps> {
     return <View>{render}</View>;
   }
 }
-export default FormItemData;
+export default ErrorBoundary()(FormItemData);

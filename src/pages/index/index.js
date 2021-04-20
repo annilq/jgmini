@@ -30,6 +30,7 @@ export default () => {
   }
 
   function goFlowList(flow) {
+    console.log(flow.url);
     wx.navigateTo({
       url: `/pages/flowlist/index?path=${flow.url}`
     })

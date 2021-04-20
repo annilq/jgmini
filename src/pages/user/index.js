@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Image } from 'remax/wechat';
+import { View, Image } from 'remax/wechat';
 
 export default () => {
   return (

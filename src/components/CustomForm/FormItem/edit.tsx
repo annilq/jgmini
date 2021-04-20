@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'annar';
+import { Input, Switch } from 'annar';
 import { Textarea, Text } from "remax/wechat"
 
 import FormEvent from '@/utils/formevent';
@@ -12,7 +12,7 @@ import {
   DataSelecter,
   TreePicker,
   // FileUpload,
-  // ImageUpload,
+  ImageUpload,
   // Address,
   // InvoiceUpload,
   JgDatePicker,
@@ -23,7 +23,7 @@ import {
   // TaskTag,
 } from '@/components/CustomForm';
 
-// import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
+import TableList from '@/components/CustomForm/SubTable/detailList';
 
 enum EmitType {
   onChange = 1,
@@ -236,11 +236,6 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
                 placeholder={placeHolder}
                 {...rest}
               />
-              // <Select placeholder={placeHolder} {...rest} allowClear>
-              //   {candidates.map(item => (
-              //     <Option key={item.value}>{item.label}</Option>
-              //   ))}
-              // </Select>
             )}
           </DataSelecter>
         );
@@ -254,22 +249,15 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         );
         break;
       case ConTypes.DATERANGE:
-        // com = <RangePicker className={styles.widgetContent} {...formProps} />;
-        com = <Text>RangePicker</Text>
-
+        com = <Text>RangePicker未实现</Text>
         break;
       case ConTypes.SWITCH:
-        // com = (
-        //   <Switch
-        //     className={styles.widgetContent}
-        //     checkedChildren="是"
-        //     checked={!!data.value}
-        //     unCheckedChildren="否"
-        //     {...formProps}
-        //   />
-        // );
-        com = <Text>Switch</Text>
-
+        com = (
+          <Switch
+            checked={!!data.value}
+            {...formProps}
+          />
+        );
         break;
       case ConTypes.DATAPICKER:
         com = (
@@ -310,44 +298,35 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         break;
       case ConTypes.FILEUPLOADER:
         // com = <FileUpload {...formProps} />;
-        com = <Text>FileUpload</Text>
-
+        com = <Text>FileUpload未实现</Text>
         break;
       case ConTypes.IMAGEUPLOADER:
-        // com = <ImageUpload {...formProps} />;
-        com = <Text>ImageUpload</Text>
+        const { controlLabel } = data
+        com = <ImageUpload {...formProps} label={controlLabel} />;
         break;
       case ConTypes.ADDRESS:
         // com = <Address {...formProps} />;
-        com = <Text>Address</Text>
+        com = <Text>Address未实现</Text>
         break;
       case ConTypes.LOCATION:
-        com = <Text>LOCATION</Text>
+        com = <Text>LOCATION未实现</Text>
         break;
       case ConTypes.INVOICE:
         // com = <InvoiceUpload form={form} {...formProps} />;
-        com = <Text>InvoiceUpload</Text>
+        com = <Text>InvoiceUpload未实现</Text>
         break;
       case ConTypes.SUBTABLE:
-        // com = (
-        //   <SubTable
-        //     extraProps={{
-        //       formCode: extraProps.formCode,
-        //       referenceField: extraProps.referenceField,
-        //       referenceMapTo: extraProps.referenceMapTo,
-        //       referenceType: extraProps.referenceType,
-        //     }}
-        //     parentFormCode={this.props.formCode}
-        //     {...formProps}
-        //   />
-        // );
-        com = <Text>SubTable</Text>
-
+        com = (
+          <TableList
+            value={value}
+            extraProps={extraProps}
+            formdata={formdata}
+          />
+        );
         break;
       case ConTypes.RelationData:
         // com = <RelationData formdata={formdata} config={extraProps} {...formProps} />;
         com = <Text>RelationData</Text>
-
         break;
       case ConTypes.TASK:
         // formCode

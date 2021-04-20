@@ -1,23 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNativeEffect } from "remax"
 import { connect } from 'react-redux';
 
 // import { useHeaderBar, useEditCom } from '@/hooks/useDetailCom';
 import { useQuery } from 'remax';
 
-// import { Edit as BaseForm } from '@/components/CustomForm';
+import { Edit as BaseForm } from '@/components/CustomForm';
 import Detail from './detail';
-// import EditBtn from './editBtn';
+import EditBtn from './editBtn';
 
 function Main(props) {
   // formCode与后台服务一样的名字
   // 编辑时候如果删除了流程再返回详情就不对了，这里不做历史控制了
-  // const [showEdit, toggleEdit] = useState(false)
+  const [showEdit, toggleEdit] = useState(false)
   const {
     jgTableModel: { item: data },
     dispatch,
   } = props;
   const { path, id, formCode } = useQuery();
+  const ifSystemForm = path.indexOf('usercreate') > -1;
   useNativeEffect(() => {
     dispatch({
       type: 'jgTableModel/queryRemote',
@@ -45,9 +46,8 @@ function Main(props) {
   // }
   return (
     <>
-      {/* <EditBtn data={data} onToggle={() => toggleEdit(!showEdit)} showEdit={showEdit} /> */}
-      {/* {showEdit ? <BaseForm formCode={formCode} ISUSERCREATE={ifSystemForm}>{EditChildCom}</BaseForm> : <Detail item={data} formCode={formCode} detailActions={headerBar} route={route} />} */}
-      <Detail item={data} formCode={formCode} path={path} />
+      <EditBtn data={data} onToggle={() => toggleEdit(!showEdit)} showEdit={showEdit} formCode={formCode} />
+      {showEdit ? <BaseForm formCode={formCode} ISUSERCREATE={ifSystemForm}></BaseForm> : <Detail item={data} formCode={formCode} path={path} />}
     </>
   );
 }

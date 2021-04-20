@@ -34,7 +34,7 @@ function JgDatePicker(props: DateProps) {
       // 放到最后面避免被rest覆盖
       onChange={onChange}
     >
-      <Cell arrow border={false} valueAlign="left">
+      <Cell labelStyle={{ display: "none" }} arrow border={false} valueAlign="left">
         {value}
       </Cell>
     </DatePicker>

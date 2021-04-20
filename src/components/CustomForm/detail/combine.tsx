@@ -20,7 +20,7 @@ function DetailPage(props: IProps) {
   const { tableConfig: config } = useFormConfig(formCode, { sysVersionId, versionId });
 
   return (
-    // approval ? (
+    approval ? (
       <ApproveForm
         formdata={item}
         containers={config.containers}
@@ -32,12 +32,12 @@ function DetailPage(props: IProps) {
         {/* 如果是审批页面有明细的话直接展示明细 */}
         {children}
       </ApproveForm>
-    // ) :
-    //   (
-    //     <Detail formdata={item} containers={config.containers} formCode={formCode}>
-    //       {children}
-    //     </Detail>
-    //   )
+    ) :
+      (
+        <Detail formdata={item} containers={config.containers} formCode={formCode}>
+          {children}
+        </Detail>
+      )
   );
 }
 

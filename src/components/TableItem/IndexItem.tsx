@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'remax/wechat';
+import { View, Text } from 'remax/wechat';
 import styles from './index.less';
 
 interface IProps {

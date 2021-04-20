@@ -4,6 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import { View } from 'remax/wechat';
+import { Cell } from 'annar';
 import FormItemData from '@/components/CustomForm/FormItem/detail';
 import { ConTypes } from '@/components/CustomForm/controlTypes';
 // import SectionHeader from '@/components/SectionHeader';
@@ -51,29 +52,28 @@ class FormDetail extends PureComponent<IProps> {
       const observerextraprops = this.getObserverExtraProps(referenceField);
       data.observerextraprops = observerextraprops;
     }
-    let labelwrap = false
+    let verticality = false
     switch (data.controlType) {
       case ConTypes.SUBTABLE:
       case ConTypes.RelationData:
       case ConTypes.IMAGEUPLOADER:
       case ConTypes.FILEUPLOADER:
       case ConTypes.INVOICE:
-        labelwrap = true
+        verticality = true
         break;
       default:
         break;
     }
     return (
-      this.lawfulValues(formdata[controlCode]) && (<View
-        data-id={controlId}
-        key={controlId}
-        className={`form-info-item controltype${controlType}`}
-      >
-        <View className="form-info-label">{controlLabel}</View>
-        <View className="form-info-value">
+      this.lawfulValues(formdata[controlCode]) && (
+        <Cell
+          data-id={controlId}
+          key={controlId}
+          label={controlLabel}
+          verticality={verticality}
+        >
           <FormItemData data={data} formdata={formdata} />
-        </View>
-      </View>)
+        </Cell>)
     );
   };
 
@@ -88,23 +88,21 @@ class FormDetail extends PureComponent<IProps> {
       // 详情默认添加创建人和创建时间
       if (currentIndex === 0) {
         forms.push(
-          <> {formdata.creatorName && <View key="creatorName" className="form-info-item">
-            <View className="form-info-label">创建人</View>
-            <View className="form-info-value">{formdata.creatorName}</View>
-          </View>}
-            {formdata.createTime && <View key="creatorTime" className="form-info-item">
-              <View className="form-info-label">创建时间</View>
-              <View className="form-info-value">{formdata.createTime}</View>
-            </View>}
+          <> {formdata.creatorName && (
+            <Cell label="创建人">
+              {formdata.creatorName}
+            </Cell>)}
+            {formdata.createTime && (
+              <Cell label="创建时间">
+                {formdata.createTime}
+              </Cell>
+            )}
             {formdata.sendUsers && (
-              <View key="sendUsers" className="form-info-item">
-                <View className="form-info-label">抄送人</View>
-                <View className="form-info-value">
-                  {JSON.parse(formdata.sendUsers)
-                    .map(item => item.name)
-                    .join(',')}
-                </View>
-              </View>
+              <Cell label="抄送人">
+                {JSON.parse(formdata.sendUsers)
+                  .map(item => item.name)
+                  .join(',')}
+              </Cell>
             )}
           </>
         );

@@ -218,12 +218,14 @@ function BaseForm(props: IProps) {
   }
 
   function validateFields(fn) {
-    const [valid] = form.validateFields()
+    const [valid] = form.validateFields();
+    console.log(form.validateFields());
+    // isPassed, errorState, errorFields, nullValuesObj
     if (valid) {
       console.log(form.getFieldsValue());
       fn(form.getFieldsValue())
     } else {
-      wx.showToast({ title: "" })
+      wx.showToast({ title: "", icon: "none" })
     }
   }
 

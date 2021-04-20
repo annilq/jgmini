@@ -33,7 +33,7 @@ class ImagePreview extends React.PureComponent<IProps> {
         { onDelete && (
           <View
             onTap={() => onDelete(file)}
-            className={styles['file-item-delete']} 
+            className={styles['file-item-delete']}
           >
             <Icon type="delete" />
           </View>
@@ -48,7 +48,7 @@ class ImagePreview extends React.PureComponent<IProps> {
     const filesValue = files && JSON.parse(files) || [];
     const FileList = filesValue && filesValue.map(this.fileItem);
     return (
-      <>
+      <View style={{ backgroundColor: "#fff" }}>
         {label && <View className={styles['file-label']}>{label}</View>}
         <View className={styles['file-list']}>
           {onPickPhoto && <View
@@ -71,7 +71,7 @@ class ImagePreview extends React.PureComponent<IProps> {
           </View>}
           {FileList}
         </View>
-      </>
+      </View>
     );
   }
 }
