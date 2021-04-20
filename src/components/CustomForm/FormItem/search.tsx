@@ -25,11 +25,11 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
       case ConTypes.INPUT:
       case ConTypes.TEXTAREA:
       case ConTypes.DATAPICKER:
-        com = <Input className={styles.widgetContent} placeholder={placeHolder} {...formProps} />;
+        com = <Input placeholder={placeHolder} {...formProps} />;
         break;
       case ConTypes.NUMINPUT:
         com = (
-          <InputNumber className={styles.widgetContent} placeholder={placeHolder} {...formProps} />
+          <InputNumber placeholder={placeHolder} {...formProps} />
         );
         break;
       case ConTypes.RADIO:
@@ -62,7 +62,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
             }}
           >
             {candidates => (
-              <CheckboxGroup options={candidates} className={styles.widgetContent} {...formProps} />
+              <CheckboxGroup options={candidates} {...formProps} />
             )}
           </DataSelecter>
         );
@@ -73,7 +73,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
       case ConTypes.DATEPICKER:
         com = (
           <JgRangePicker
-            className={styles.widgetContent}
+          
             extraProps={{ formatId: extraProps.number }}
             {...formProps}
           />
@@ -82,7 +82,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
       case ConTypes.SWITCH:
         com = (
           <Switch
-            className={styles.widgetContent}
+          
             checkedChildren="是"
             checked={!!data.value}
             unCheckedChildren="否"

@@ -167,12 +167,11 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
     let com;
     switch (controlType) {
       case ConTypes.INPUT:
-        com = <Input className={styles.widgetContent} placeholder={placeHolder} {...formProps} />;
+        com = <Input placeholder={placeHolder} {...formProps} />;
         break;
       case ConTypes.TEXTAREA:
         com = (
           <Textarea
-            className={styles.widgetContent}
             placeholder={placeHolder}
             {...formProps}
           />
@@ -330,7 +329,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         break;
       case ConTypes.TASK:
         // formCode
-        // com = <TaskTag className={styles.widgetContent} formdata={formdata} {...formProps} />;
+        // com = <TaskTag formdata={formdata} {...formProps} />;
         com = <Text>TaskTag</Text>
         break;
       default:
