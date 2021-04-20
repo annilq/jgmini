@@ -3,7 +3,6 @@ import { Input, Switch } from 'annar';
 import { Textarea, Text } from "remax/wechat"
 
 import FormEvent from '@/utils/formevent';
-import styles from '../index.less';
 import { ConTypes } from '../controlTypes';
 import ErrorBoundary from './errorhandle';
 
@@ -11,14 +10,12 @@ import {
   DataPicker,
   DataSelecter,
   TreePicker,
-  // FileUpload,
   ImageUpload,
   // Address,
   // InvoiceUpload,
   JgDatePicker,
   JgNumber,
   Picker,
-  // SubTable,
   // RelationData,
   // TaskTag,
 } from '@/components/CustomForm';
