@@ -1,21 +1,13 @@
 # Remax Wechat With TypeScript
-
-移动端入口分为三个
-### 1.审批入口
-http://localhost:8000/approvepage?bizId=1&id=2&formCode=3&type=4&flag=5&taskDetailId=6
-路径:/approvepage
-查询参数(以下参数列表数据均有提供)
-{bizId, id, formCode, type, flag}
-### 2.发起入口
-http://localhost:8000/editpage/432971579142615040?path=usercreate/evec$405070783228256256&
-路径:/editpage/:id?
-查询参数
-{path:"由菜单配置"}
-### 3.详情入口
-http://localhost:8000/detailpage/432971579142615040?path=usercreate/evec$405070783228256256&
-路径:/editpage/:id
-查询参数
-{path:"由菜单配置"}
-
-所有入口均要加token参数到查询字符串后面
-
+[remax开发注意事项](https://remaxjs.org/faq)
+#### 功能
+1. 只实现了用自定义表单定义流程的功能
+2. 非自定义表单定义的功能后面做
+#### 目前遗留问题
+1. 由于remax为组件定义了嵌套层数并且还未找到如何在remax项目中动态import组件，所以暂时不支持表单添加子表,但可以查看
+2. 审批简化，不能手动指定审批人
+3. 关联模块组件不实现
+4. 单选、多选、下拉框都改成下拉框实现方式
+5. 项目是由antd项目改造，部分表单功能未实现
+6. 树形组件只能使用两层
+7. 模板功能没添加
