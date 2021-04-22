@@ -80,10 +80,7 @@ class BaseForm extends PureComponent<IProps> {
             valueAlign="left"
             border={false}
             data-id={controlId}
-            label={(
-              <Text>
-                {controlLabel}
-              </Text>)}
+            label={controlLabel}
             noStyle={noStyle}
           >
             <FormItemData data={data} formdata={form.getFieldsValue()} />
@@ -94,10 +91,7 @@ class BaseForm extends PureComponent<IProps> {
               border={false}
               valueAlign="left"
               rules={rules}
-              label={noStyle ? "" : (
-                <Text>
-                  {controlLabel}
-                </Text>)}
+              label={controlLabel}
               noStyle={noStyle}
               data-id={controlId}
             >

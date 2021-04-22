@@ -1,10 +1,12 @@
 import React from 'react';
-import { Input, Icon } from 'antd';
+import { Input, Icon } from 'annar';
+import { View } from 'remax/wechat';
 
 import DataPicker from '@/components/CustomForm/DataPicker';
 function CopyTo({ onChange, value }) {
   const defaultValue = (value && JSON.parse(value)) || [];
   const names = defaultValue.map(item => item.name).join(',');
+  const ids = defaultValue.map(item => item.id).join(',');
   function onChangeHandle(data) {
     const newData = data.map(({ name, id }) => ({
       name,
@@ -12,6 +14,7 @@ function CopyTo({ onChange, value }) {
     }));
     onChange(JSON.stringify(newData));
   }
+  const id = "copyToId"
   return (
     <DataPicker
       extraProps={{
@@ -19,19 +22,11 @@ function CopyTo({ onChange, value }) {
         multiple: true,
       }}
       placeholder="抄送人"
+      value={ids}
+      id={id}
+      formdata={{ [id]: ids, copyToName: names }}
       onSelect={data => onChangeHandle(data)}
-    >
-      <div style={{ lineHeight: '30px' }}>
-        抄送给
-        <Input
-          value={names}
-          readOnly
-          placeholder="抄送人"
-          suffix={<Icon type="search" style={{ color: 'rgba(0,0,0,.45)' }} />}
-          style={{ flex: 1, verticalAlign: 'middle' }}
-        />
-      </div>
-    </DataPicker>
+    />
   );
 }
 export default CopyTo;

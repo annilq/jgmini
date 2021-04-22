@@ -25,7 +25,7 @@ function SearchForm(props) {
   };
 
   const handleReset = () => {
-    formRef.resetFields({});
+    formRef.resetFields();
     reset();
     setVisible(false);
   };
@@ -50,7 +50,7 @@ function SearchForm(props) {
         visible={visible}
         onClose={() => setVisible(false)}
       >
-        <Form onFinish={handleSubmit} style={{ backgroundColor: "#f0f0f0" }}>
+        <Form onFinish={handleSubmit}>
           {searchArr.map(v => (
             <Form.Item
               key={v.name}

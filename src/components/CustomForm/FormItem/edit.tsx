@@ -141,7 +141,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
     // formProps:{formdata,onChange ,value,id}接口数据，用来获取关联值
     const { data, form, id, value, formdata, parentformdata, iseditmode } = this.props;
     // 表单属性
-    const { extraProps, placeHolder, controlType, controlCode } = data;
+    const { extraProps, placeHolder, controlType, controlCode, controlLabel } = data;
     // console.log(this.props);
     // console.log(data);
     if (extraProps.combineField) {
@@ -195,7 +195,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             {...formProps}
           >
             {(candidates, rest) => (
-              <Picker data={candidates} {...rest} />
+              <Picker data={candidates} {...rest} label={controlLabel} />
             )}
           </DataSelecter>
         );
@@ -258,7 +258,6 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         com = <Text>FileUpload未实现</Text>
         break;
       case ConTypes.IMAGEUPLOADER:
-        const { controlLabel } = data
         com = <ImageUpload {...formProps} label={controlLabel} />;
         break;
       case ConTypes.ADDRESS:

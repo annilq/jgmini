@@ -9,9 +9,9 @@ import { Button, Form } from 'annar';
 import { useQuery } from 'remax';
 
 import { ConTypes } from '@/components/CustomForm/controlTypes';
-// import Approve from '@/components/CustomForm/Approve';
-// import CopyTo from '@/components/CopyTo';
-// import SectionHeader from '@/components/SectionHeader';
+import Approve from '@/components/CustomForm/Approve';
+import CopyTo from '@/components/CopyTo';
+import SectionHeader from '@/components/SectionHeader';
 import useFormConfig from '@/hooks/useFormConfig';
 import useRefresh from '@/hooks/useRefresh';
 import { getConfigFormPath } from '@/components/CustomForm/routerConfig'
@@ -282,34 +282,30 @@ function BaseForm(props: IProps) {
       >
         {children}
       </Edit>
-      {/* {approvable && (
-            <View style={{ padding: '0 12px 20px', backgroundColor: '#fff' }}>
-              <SectionHeader
-                title="选择审批流程"
-                style={{ width: '100%', lineHeight: '50px', marginBottom: '0', paddingLeft: '8px' }}
-              />
-              <Row gutter={{ md: 8, lg: 24, xl: 48 }} style={{ padding: '0', margin: '0' }}>
-                <Approve
-                  formCode={formCode}
-                  onChange={({ approveProcessId, nextNodeApprovers }) => {
-                    reactDispatch({ type: 'approveProcessId', data: approveProcessId });
-                    reactDispatch({ type: 'nextNodeApprovers', data: nextNodeApprovers });
-                  }}
-                  formdata={values}
-                  value={{ approveProcessId, nextNodeApprovers }}
-                />
-                <Col span={24} style={{ padding: '0', marginTop: 10 }}>
-                  <CopyTo
-                    onChange={data => {
-                      reactDispatch({ type: 'sendUsers', data });
-                    }}
-                    formdata={values}
-                    value={sendUsers}
-                  />
-                </Col>
-              </Row>
-            </View>
-          )} */}
+      {approvable && (
+        <View style={{ backgroundColor: '#fff', marginTop: "20px" }}>
+          <SectionHeader
+            title="选择审批流程"
+            style={{ width: '100%', lineHeight: '80px', marginBottom: '0', paddingLeft: '40px' }}
+          />
+          <Approve
+            formCode={formCode}
+            onChange={({ approveProcessId, nextNodeApprovers }) => {
+              reactDispatch({ type: 'approveProcessId', data: approveProcessId });
+              reactDispatch({ type: 'nextNodeApprovers', data: nextNodeApprovers });
+            }}
+            formdata={values}
+            value={{ approveProcessId, nextNodeApprovers }}
+          />
+          <CopyTo
+            onChange={data => {
+              reactDispatch({ type: 'sendUsers', data });
+            }}
+            formdata={values}
+            value={sendUsers}
+          />
+        </View>
+      )}
       <View className="actionBtns" style={{ backgroundColor: "#fafafa" }}>
         {approvable && (
           <Button
@@ -330,7 +326,6 @@ function BaseForm(props: IProps) {
             backgroundColor: '#ffa646',
             color: '#fff',
             border: 'none',
-
           }}
           disabled={submitloading}
           onTap={() => validateFields((values) => checkExceed(values, saveFormData))}

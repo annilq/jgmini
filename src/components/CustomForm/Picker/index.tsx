@@ -1,26 +1,36 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Cell } from 'annar';
 
+type labelKey = string;
+type valueKey = string;
 interface Iprops {
   value: string;
   data: { label: string; value: string }[];
   readOnly?: boolean;
-  placeholder: string;
+  label: string;
   onChange: (id: string) => void;
+  optionKeys?: [labelKey, valueKey]
 }
 
 function Picker(props: Iprops) {
-  const { data, value, onChange = () => { }, placeholder } = props;
+  const { data, value, onChange = () => { }, optionKeys = ["label", "value"], label } = props;
+
+  const options = useMemo(() => {
+    const [label, value] = optionKeys;
+    // 如果data是字符串数组，则label和value都为本身值
+    return data.map(item => ({ label: item[label] || item, value: item[value] || item }))
+  }, [data, optionKeys]);
+  
   const handleChange = (index) => {
-    onChange(data[index].value)
+    onChange(options[index].value)
   }
-  const valueIndex = data.findIndex(item => item.value === value)
+  const valueIndex = options.findIndex(item => item.value === value)
   return (
     <Cell.Picker
-      label={placeholder}
+      label={label}
       align="left"
       arrow
-      range={data}
+      range={options}
       rangeKey="label"
       value={valueIndex}
       border={false}
