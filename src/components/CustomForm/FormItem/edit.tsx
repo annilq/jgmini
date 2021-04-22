@@ -184,37 +184,6 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
         );
         break;
       case ConTypes.RADIO:
-        com = (
-          <DataSelecter
-            extraProps={{
-              flag: extraProps.flag,
-              type: extraProps.type,
-              candidates: extraProps.candidates,
-            }}
-            {...formProps}
-          >
-            {(candidates, rest) => (
-              <Picker data={candidates} {...rest} />
-            )}
-          </DataSelecter>
-        );
-        break;
-      case ConTypes.CHECKBOXG:
-        com = (
-          <DataSelecter
-            extraProps={{
-              flag: extraProps.flag,
-              type: extraProps.type,
-              candidates: extraProps.candidates,
-            }}
-            {...formProps}
-          >
-            {(candidates, rest) => (
-              <Picker data={candidates} {...rest} />
-            )}
-          </DataSelecter>
-        );
-        break;
       case ConTypes.SELECT:
         com = (
           <DataSelecter
@@ -226,11 +195,7 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             {...formProps}
           >
             {(candidates, rest) => (
-              <Picker
-                data={candidates}
-                placeholder={placeHolder}
-                {...rest}
-              />
+              <Picker data={candidates} {...rest} />
             )}
           </DataSelecter>
         );

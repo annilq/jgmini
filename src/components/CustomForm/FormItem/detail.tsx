@@ -78,20 +78,6 @@ class FormItemData extends PureComponent<FormDetailProps> {
           </DataSelecter>
         );
         break;
-      // 多选框
-      case ConTypes.CHECKBOXG:
-        render = (
-          <DataSelecter extraProps={extraProps} >
-            {(candidates) => {
-              const label = value.reduce((accumulator, currentValue) => {
-                const obj = candidates.find(item => parseInt(item.value, 10) === parseInt(currentValue, 10));
-                return accumulator + (obj ? `${obj.label},` : '');
-              }, '');
-              return label;
-            }}
-          </DataSelecter>
-        );
-        break;
       // 数据选择
       case ConTypes.DATAPICKER:
         // 如果有nameCode的时候直接根据nameCode显示(接口有返回)，不需要额外判断

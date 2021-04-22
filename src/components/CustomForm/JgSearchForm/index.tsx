@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Spin } from 'antd';
-
+import { View } from "remax/wechat"
 import { ConTypes } from '@/components/CustomForm/controlTypes';
 import FormSearchItem from '@/components/CustomForm/FormItem/search';
 import SearchForm from '@/components/SearchForm';
@@ -26,11 +25,10 @@ function JgSearchForm(props: IProps) {
   const {
     formCode,
     table: { searchListConfig: controls },
-    spinning,
     dispatch,
   } = props;
 
-  const { tableConfig } = useFormConfig(formCode, null, false);
+  const { tableConfig } = useFormConfig(formCode);
   // 接口有数据就用接口的，没有数据就用默认配置的
   useEffect(() => {
     dispatch({ type: 'table/searchConfig', payload: { formCode } });
@@ -55,11 +53,6 @@ function JgSearchForm(props: IProps) {
 
   function getForms(controls = []) {
     const { filter = [] } = props;
-    // 如果在项目面板则把项目选项隐藏
-    const appCode = wx.getStorageSync('app-code');
-    if (appCode === '07') {
-      filter.push('projectId');
-    }
     // 过滤相关联无需显示的查询条件(采购里面应该先查项目，再查合同)
     const final = controls
       .filter(item => item.isSearchAble === true)
@@ -122,12 +115,9 @@ function JgSearchForm(props: IProps) {
   // 用户默认的搜索条件
   const searchData = defaultArr.concat(searchArr);
   return (
-    <div style={style}>
-      {/* <Spin tip="加载中..." spinning={spinning}>
-        <SearchForm {...rest} submit={search} searchArr={searchData} />
-      </Spin> */}
+    <View style={style}>
       <SearchForm {...rest} submit={search} searchArr={searchData} />
-    </div>
+    </View>
   );
 }
 

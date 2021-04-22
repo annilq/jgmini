@@ -12,7 +12,6 @@ const ConTypes = {
   TEXTAREA: 2, //多行文本
   NUMINPUT: 3, //数字选择
   RADIO: 4, //单选框
-  CHECKBOXG: 5, //多选框
   SELECT: 6, //下拉框
   DATEPICKER: 7, //时间选择
   SWITCH: 9, //开关

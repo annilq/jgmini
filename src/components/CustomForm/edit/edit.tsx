@@ -61,7 +61,6 @@ class BaseForm extends PureComponent<IProps> {
       // 以下三个组件如果用表单默认样式会生成额外标签导致嵌套过深
       case ConTypes.RADIO:
       case ConTypes.SELECT:
-      case ConTypes.CHECKBOXG:
       case ConTypes.DATAPICKER:
         noStyle = true
         break;

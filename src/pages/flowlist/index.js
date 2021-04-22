@@ -4,11 +4,10 @@ import { View, Image } from 'remax/wechat';
 import { useNativeEffect, useQuery } from 'remax';
 import { usePageEvent } from 'remax/macro';
 
-// import SearchForm from '@/components/CustomForm/JgSearchForm';
+import SearchForm from '@/components/CustomForm/JgSearchForm';
 import OperationButton from '@/components/OperationButton';
 import JgTable from '@/components/CustomForm/JgTable';
 
-// import styles from '@/common/styles/tableList.less';
 import ListItemCell from '@/components/TableItem/ListItem';
 import { getServiceAndFormCodeFromPath } from '@/components/CustomForm/FormCodeService';
 import { getConfigFormPath } from '@/components/CustomForm/routerConfig';
@@ -72,17 +71,15 @@ function Main(props) {
   // console.log(data);
   return (
     <View>
-      {/* <View className={styles.tableListForm}>
-          <SearchForm
-            filter={Object.keys(params || {})}
-            loading={tableLoading}
-            formCode={formCode}
-            reset={reset}
-            // 用户默认的搜索框
-            onSearch={onSearch}
-            key={formCode}
-          />
-        </View> */}
+      <SearchForm
+        filter={Object.keys(params || {})}
+        loading={tableLoading}
+        formCode={formCode}
+        reset={reset}
+        // 用户默认的搜索框
+        onSearch={onSearch}
+        key={formCode}
+      />
       <OperationButton operationType="WRITE" operations={config.operations}>
         <Image src="/images/wfqd.png" alt="新增"
           style={{

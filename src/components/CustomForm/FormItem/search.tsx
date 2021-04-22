@@ -1,15 +1,10 @@
 import React from 'react';
-import { Input, Switch, Checkbox, Select, InputNumber } from 'antd';
-import styles from '../index.less';
+import { Input, Switch } from 'annar';
 import { ConTypes } from '../controlTypes';
 import ErrorBoundary from './errorhandle';
 
-import { DataSelecter, TreePicker,DataPicker, Address } from '@/components/CustomForm';
+import { DataSelecter, TreePicker, JgDatePicker, JgNumber, Address, Picker } from '@/components/CustomForm';
 
-const CheckboxGroup = Checkbox.Group;
-const { Option } = Select;
-// IFormProps
-@ErrorBoundary('组件渲染错误')
 class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
   getRenderByType = () => {
     // formProps:{onChange ,value,id}接口数据，用来获取关联值
@@ -29,7 +24,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
         break;
       case ConTypes.NUMINPUT:
         com = (
-          <InputNumber placeholder={placeHolder} {...formProps} />
+          <JgNumber placeholder={placeHolder} {...formProps} />
         );
         break;
       case ConTypes.RADIO:
@@ -41,28 +36,10 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
               type: extraProps.type,
               candidates: extraProps.candidates,
             }}
+            {...formProps}
           >
-            {candidates => (
-              <Select {...formProps} placeholder={placeHolder} allowClear>
-                {candidates.map(item => (
-                  <Option key={item.value}>{item.label}</Option>
-                ))}
-              </Select>
-            )}
-          </DataSelecter>
-        );
-        break;
-      case ConTypes.CHECKBOXG:
-        com = (
-          <DataSelecter
-            extraProps={{
-              flag: extraProps.flag,
-              type: extraProps.type,
-              candidates: extraProps.candidates,
-            }}
-          >
-            {candidates => (
-              <CheckboxGroup options={candidates} {...formProps} />
+            {(candidates, rest) => (
+              <Picker data={candidates} {...rest} />
             )}
           </DataSelecter>
         );
@@ -72,7 +49,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
         break;
       case ConTypes.DATEPICKER:
         com = (
-          <DataPicker
+          <JgDatePicker
             extraProps={{ formatId: extraProps.number }}
             {...formProps}
           />
@@ -81,10 +58,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
       case ConTypes.SWITCH:
         com = (
           <Switch
-          
-            checkedChildren="是"
             checked={!!data.value}
-            unCheckedChildren="否"
             {...formProps}
           />
         );
@@ -111,10 +85,8 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
   };
 
   render() {
-    // console.log(this.props);
-
     const Com = this.getRenderByType();
     return <>{Com}</>;
   }
 }
-export default FormSearchItem;
+export default ErrorBoundary('组件渲染错误')(FormSearchItem);
