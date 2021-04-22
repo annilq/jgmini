@@ -4,7 +4,6 @@ const ValidatorTypes = {
   INPUTLENGTH: 2, //输入框长度
   NUMBER: 3, //数字
   DATE: 4, //时间
-  DATERANGE: 5, //时间区间
 };
 // 组件controlTypes
 const ConTypes = {
@@ -16,7 +15,6 @@ const ConTypes = {
   CHECKBOXG: 5, //多选框
   SELECT: 6, //下拉框
   DATEPICKER: 7, //时间选择
-  DATERANGE: 8, //时间选择
   SWITCH: 9, //开关
   DATAPICKER: 21, //可关联模块用于选择查看
   TREEPICKER: 22, //可关联模块用于选择查看
@@ -26,7 +24,6 @@ const ConTypes = {
   LOCATION: 26, // 定位信息
   INVOICE: 27, // 发票上传回显信息
   SUBTABLE: 28, // 子表
-  RelationData: 29, // 关联模块
   TASK: 30, // 关联模块
 };
 export { ValidatorTypes, ConTypes };

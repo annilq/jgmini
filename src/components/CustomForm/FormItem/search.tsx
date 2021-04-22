@@ -4,7 +4,7 @@ import styles from '../index.less';
 import { ConTypes } from '../controlTypes';
 import ErrorBoundary from './errorhandle';
 
-import { DataSelecter, TreePicker, JgRangePicker, Address } from '@/components/CustomForm';
+import { DataSelecter, TreePicker,DataPicker, Address } from '@/components/CustomForm';
 
 const CheckboxGroup = Checkbox.Group;
 const { Option } = Select;
@@ -72,8 +72,7 @@ class FormSearchItem extends React.Component<JgFormProps.FormItemProps> {
         break;
       case ConTypes.DATEPICKER:
         com = (
-          <JgRangePicker
-          
+          <DataPicker
             extraProps={{ formatId: extraProps.number }}
             {...formProps}
           />

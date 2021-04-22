@@ -55,7 +55,6 @@ class FormDetail extends PureComponent<IProps> {
     let verticality = false
     switch (data.controlType) {
       case ConTypes.SUBTABLE:
-      case ConTypes.RelationData:
       case ConTypes.IMAGEUPLOADER:
       case ConTypes.FILEUPLOADER:
       case ConTypes.INVOICE:

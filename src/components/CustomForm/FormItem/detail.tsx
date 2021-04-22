@@ -16,7 +16,6 @@ import {
 // import TagList from '@/components/CustomForm/TaskTag/taglist';
 import TableList from '@/components/CustomForm/SubTable/detailList';
 // import Address from '@/components/CustomForm/Address/detail';
-// import RelationData from '@/components/CustomForm/RelationData/detail';
 // import RangePicker from '@/components/CustomForm/JgDatePicker/rangepicker';
 // import DetailModal from '@/components/CustomForm/DetailModal/detail';
 const NODATA_TEXT = "-"
@@ -147,10 +146,6 @@ class FormItemData extends PureComponent<FormDetailProps> {
       //   case ConTypes.INVOICE:
       //     render = <InvoiceUpload value={value} readOnly />;
       //     break;
-      //   // case ConTypes.DATERANGE:
-      //   //   render = <RangePicker value={value} readOnly />;
-      //   //   break;
-
       //   // 显示文件列表
       case ConTypes.FILEUPLOADER:
         // render = <FilePreview files={value} label={controlLabel} />;
@@ -174,16 +169,6 @@ class FormItemData extends PureComponent<FormDetailProps> {
           />
         );
         break;
-      //   case ConTypes.RelationData:
-      //     // formCode
-      //     render = (
-      //       <RelationData
-      //         value={value}
-      //         config={data.extraProps}
-
-      //       />
-      //     );
-      //     break;
       //   case ConTypes.TASK:
       //     // formCode
       //     render = <TagList value={value && JSON.parse(value)} />;

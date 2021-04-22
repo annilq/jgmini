@@ -7,7 +7,7 @@ interface DateProps extends JgFormProps.IFormProps {
 
 function JgDatePicker(props: DateProps) {
 
-  const { extraProps, value, onChange, placeholder } = props;
+  const { extraProps, value, onChange } = props;
   const formatId = extraProps && extraProps.formatId;
   // format
   // 0 :YYYY-MM-DD'
@@ -34,9 +34,7 @@ function JgDatePicker(props: DateProps) {
       // 放到最后面避免被rest覆盖
       onChange={onChange}
     >
-      <Cell labelStyle={{ display: "none" }} arrow border={false} valueAlign="left">
-        {value}
-      </Cell>
+      {value || "请选择"}
     </DatePicker>
   );
 }

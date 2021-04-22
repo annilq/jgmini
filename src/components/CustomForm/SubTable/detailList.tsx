@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { View } from "remax/wechat"
 import useFormConfig from '@/hooks/useFormConfig';
 import useFormCode from '@/hooks/useFormCode';
 import TableList from './tableList';
@@ -16,10 +16,10 @@ interface IProps {
 
 function SubTableDetail(props: IProps) {
   // console.log(data, tableConfig);
-  const { extraProps, observerextraprops = {}, formdata, value=[], title, omitCols, ...rest } = props;
+  const { extraProps, observerextraprops = {}, formdata, value = [], title, omitCols, ...rest } = props;
   // 详情的value 中有版本信息
   if (!value[0]) {
-    return false;
+    return <View style={{ textAlign: "center" }}>暂无数据</View>;
   }
   const formCode = useFormCode({
     extraProps,

@@ -16,7 +16,6 @@ import {
   JgDatePicker,
   JgNumber,
   Picker,
-  // RelationData,
   // TaskTag,
 } from '@/components/CustomForm';
 
@@ -244,9 +243,6 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
           />
         );
         break;
-      case ConTypes.DATERANGE:
-        com = <Text>RangePicker未实现</Text>
-        break;
       case ConTypes.SWITCH:
         com = (
           <Switch
@@ -319,10 +315,6 @@ class FormEditItem extends React.PureComponent<JgFormProps.FormItemProps> {
             formdata={formdata}
           />
         );
-        break;
-      case ConTypes.RelationData:
-        // com = <RelationData formdata={formdata} config={extraProps} {...formProps} />;
-        com = <Text>RelationData</Text>
         break;
       case ConTypes.TASK:
         // formCode

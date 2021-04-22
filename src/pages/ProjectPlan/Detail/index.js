@@ -5,7 +5,7 @@ import router from 'umi/router';
 
 import ProgressRing from '@/components/ProgressRing';
 import SearchForm from '@/components/SearchForm';
-import { JgRangePicker, FilePreview } from '@/components/CustomForm';
+import { DatePicker, FilePreview } from '@/components/CustomForm';
 import useOrientationChange from '@/hooks/useOrientationChange';
 
 import styles from "@/common/styles/projectplan.less"
@@ -22,7 +22,7 @@ function Main(props) {
     {
       name: 'dateparams',
       // label: "时间范围",
-      component: <JgRangePicker extraProps={{ avoidInit: true }} className={commonStyles.searchInput} />,
+      component: <DatePicker extraProps={{ avoidInit: true }} className={commonStyles.searchInput} />,
     }
   ];
 

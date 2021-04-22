@@ -38,7 +38,6 @@ export const getValidator = (controlConfig: JgFormProps.ControlConfig) => {
           break;
         case ValidatorTypes.NUMBER:
         case ValidatorTypes.DATE:
-        case ValidatorTypes.DATERANGE:
           break;
         default:
       }
