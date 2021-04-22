@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import memoizeOne from 'memoize-one';
 
-import {  SelectorPopup } from 'annar';
+import { SelectorPopup } from 'annar';
 import { baseUrl } from '@/services/api';
 import { Text } from 'remax/wechat';
 import { useNativeEffect } from 'remax';
@@ -68,7 +68,7 @@ function TreePicker(props) {
     return <Text>{name ? name : (value && value.toString() || false)}</Text>;
   }
   // console.log(data);
-  const generatorRangeData = (data) => {
+  const generatorRangeData = (data = []) => {
     return data.map(({ name, id, children }) => {
       const col = { text: name, value: id, children: [] }
       if (children && children.length > 0) {
@@ -82,7 +82,8 @@ function TreePicker(props) {
   const options = generatorRangeData(data)
   // console.log(current, value);
   const handleOnChange = (value: any, valueStr: any) => {
-    onChange(value)
+    // 树形选择框，有两个值取最后那个值
+    onChange(value[1])
   }
   return (
     <SelectorPopup

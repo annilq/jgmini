@@ -1,7 +1,8 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { Button, Col, Form, Row } from 'antd';
-import styles from '@/common/styles/tableList.less';
+import React, { useState } from 'react';
+import { Button, Form, SearchBar } from 'annar';
+import { View } from "remax/wechat"
+
+import Layer from '@/components/Layer';
 
 /**
  * 公共列表查询组件
@@ -12,108 +13,91 @@ import styles from '@/common/styles/tableList.less';
  * @param clear         重置
  * @param exportData    导出数据
  * @param exportStr     导出操作文案
- * @param form
  * @param loading
  */
-@Form.create()
-class SearchForm extends PureComponent {
-  static propTypes = {
-    searchArr: PropTypes.array.isRequired,
-    submit: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired,
+function SearchForm(props) {
+  const { searchArr = [], submit, reset, exportData, exportStr, loading, children } = props;
+  const [visible, setVisible] = useState(false)
+  const [formRef] = Form.useForm()
+  const handleSubmit = values => {
+    submit(values);
+    setVisible(false);
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-
-    const { form, submit } = this.props;
-    form.validateFields((err, values) => {
-      if (!err) {
-        submit(values);
-      }
-    });
-  };
-
-  handleReset = () => {
-    const { form, reset } = this.props;
-    form.resetFields();
+  const handleReset = () => {
+    formRef.resetFields({});
     reset();
+    setVisible(false);
   };
 
-  handleExport = e => {
+  const handleExport = e => {
     e.preventDefault();
-
-    const { form, exportData } = this.props;
-    form.validateFields((err, values) => {
-      if (!err) {
-        exportData(values);
-      }
-    });
+    formRef.validateFields().then(exportData);
   };
 
-  render() {
-    const {
-      searchArr = [],
-      reset,
-      exportData,
-      exportStr,
-      form: { getFieldDecorator },
-      loading,
-      children,
-    } = this.props;
-
-    return (
-      <Form onSubmit={this.handleSubmit} layout="inline">
-        <Row gutter={{ md: 8, lg: 12, xl: 16 }}>
+  return (
+    <>
+      <SearchBar
+        placeholder="搜索"
+        onFocus={() => setVisible(true)}
+        hideActionButton
+        inputStyle={{
+          backgroundColor: '#fff',
+          margin: "20px 20px 0"
+        }}
+      />
+      <Layer
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
+        <Form onFinish={handleSubmit} style={{ backgroundColor: "#f0f0f0" }}>
           {searchArr.map(v => (
-            <Col md={3} sm={24} key={v.name}>
-              <Form.Item label={v.label}>
-                {getFieldDecorator(v.name, {
-                  initialValue: v.initialValue,
-                  rules: v.rules,
-                })(v.component)}
-              </Form.Item>
-            </Col>
+            <Form.Item
+              key={v.name}
+              name={v.name}
+              label={v.label}
+              rules={v.rules}
+            >
+              {v.component}
+            </Form.Item>
           ))}
           {searchArr.length > 0 && (
-            <Col md={3} sm={24}>
-              <span className={styles.submitButtons}>
-                {children}
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  icon="search"
-                  style={{ marginLeft: '10px' }}
-                >
-                  查询
+            <View style={{ textAlign: 'center', padding: "10px 0" }}>
+              {children}
+              <Button
+                type="primary"
+                nativeType="submit"
+                loading={loading}
+                // icon={<SearchOutlined />}
+                style={{ marginLeft: '10px' }}
+              >
+                查询
                 </Button>
-                {reset ? (
-                  <Button
-                    style={{ marginLeft: '10px' }}
-                    onClick={this.handleReset}
-                    disabled={loading}
-                  >
-                    重置
-                  </Button>
-                ) : null}
-                {exportData ? (
-                  <Button
-                    style={{ marginLeft: '10px' }}
-                    onClick={this.handleExport}
-                    disabled={loading}
-                    icon="download"
-                  >
-                    {exportStr}
-                  </Button>
-                ) : null}
-              </span>
-            </Col>
+              {reset ? (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  onTap={handleReset}
+                  disabled={loading}
+                >
+                  重置
+                </Button>
+              ) : null}
+              {exportData ? (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  onTap={handleExport}
+                  disabled={loading}
+                // icon={<DownloadOutlined />}
+                >
+                  {exportStr}
+                </Button>
+              ) : null}
+            </View>
           )}
-        </Row>
-      </Form>
-    );
-  }
+        </Form>
+      </Layer>
+    </>
+  );
 }
 
 export default SearchForm;

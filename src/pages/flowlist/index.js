@@ -36,6 +36,7 @@ function Main(props) {
   const onSearch = (params) => {
     let searchParams = {};
     // 用户全自定义的搜索条件和系统自定义搜索条件不一样
+    const ISUSERCREATE = path.indexOf('usercreate') > -1;
     if (ISUSERCREATE) {
       const paramsArr = [];
       Object.keys(params).forEach((key) => {
@@ -72,7 +73,6 @@ function Main(props) {
   return (
     <View>
       <SearchForm
-        filter={Object.keys(params || {})}
         loading={tableLoading}
         formCode={formCode}
         reset={reset}
@@ -83,9 +83,12 @@ function Main(props) {
       <OperationButton operationType="WRITE" operations={config.operations}>
         <Image src="/images/wfqd.png" alt="新增"
           style={{
-            width: 84, height: 84,
-            position: "fixed", bottom: 40, right: 20,
-            zIndex: 999
+            width: 84,
+            height: 84,
+            position: "fixed",
+            bottom: 40,
+            right: 20,
+            zIndex: 99
           }}
           onClick={() => showEdit()}
         />
