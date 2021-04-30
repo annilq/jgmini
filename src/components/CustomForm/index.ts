@@ -2,20 +2,14 @@
 import Address from './Address';
 import DataPicker from './DataPicker';
 import DataSelecter from './DataSelecter';
-// import Detail from './detail';
+import Detail from './detail';
 import Edit from './edit';
 import FilePreview from './FilePreview';
-// import FileUpload from './FileUpload';
-// import FormItem from './FormItem';
 import ImagePreview from './ImagePreview';
 import ImageUpload from './ImageUpload';
-import InvoiceUpload from './InvoiceUpload';
-// // import JgCustomPage from './JgCustomPage';
 import JgDatePicker from './JgDatePicker';
 import JgNumber from './JgNumber';
-// import JgSearchForm from './JgSearchForm';
-// // import JgTable from './JgTable';
-// // import JgTableSetting from './JgTableSetting';
+import JgSearchForm from './JgSearchForm';
 import TreePicker from './TreePicker';
 import SubTable from './SubTable';
 import TaskTag from './TaskTag';
@@ -26,19 +20,13 @@ export {
   DataPicker,
   DataSelecter,
   Edit,
-  // Detail,
+  Detail,
   FilePreview,
-  // FileUpload,
-  //   FormItem as JgFormItem,
   ImagePreview,
   ImageUpload,
-  // InvoiceUpload,
-  // JgCustomPage,
   JgDatePicker,
   JgNumber,
-  // JgSearchForm,
-  // JgTable,
-  // JgTableSetting,
+  JgSearchForm,
   TreePicker,
   SubTable,
   TaskTag,
